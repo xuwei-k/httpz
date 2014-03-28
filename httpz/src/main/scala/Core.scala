@@ -5,7 +5,7 @@ import argonaut._
 
 object Core {
 
-  def httpRequest[A](req: Request)(implicit A: DecodeJson[A]): Action[A] =
+  def json[A](req: Request)(implicit A: DecodeJson[A]): Action[A] =
     Action(Z.freeC(RequestF.one[Error \/ A, Error \/ Json](
       req,
       \/.left,
@@ -17,6 +17,14 @@ object Core {
         }
       }
     )))
+
+  def string(req: Request): ActionE[Throwable, String] =
+    Action(Z.freeC(RequestF.one[Throwable \/ String, String](
+      req,
+      \/.left,
+      (_, result) => result,
+      (_, result) => \/-(result)
+   )))
 
 }
 
