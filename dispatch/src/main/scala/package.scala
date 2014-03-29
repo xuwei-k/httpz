@@ -10,7 +10,8 @@ package object dispatchclassic {
 
   private[dispatchclassic] def request2dispatch(r: Request) = {
     import dispatch.classic._
-    val req = url(r.url.toString) <:< (userAgentHeader ++ r.headers) <<? r.params
+    val r0 = url(r.url) <:< (userAgentHeader ++ r.headers) <<? r.params
+    val req = r.body.fold(r0)(r0 << _)
     r.basicAuth.fold(req){case (user, pass) => req.as(user, pass)}.as_str
   }
 }

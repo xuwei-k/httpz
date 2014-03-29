@@ -6,11 +6,12 @@ import java.net.URI
 
 import org.apache.http.{Header, HttpStatus, HttpEntity, StatusLine}
 import org.apache.http.util.EntityUtils
-import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.{HttpGet, HttpPost}
 import org.apache.http.client.protocol.HttpClientContext
 import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.HttpClients
+import org.apache.http.entity.ByteArrayEntity
 
 final case class HttpError(
   status: Int,
@@ -31,15 +32,26 @@ object ApacheInterpreter extends InterpretersTemplate {
   }
 
   private def executeRequest(req: httpz.Request) = {
-    val httpGet = new HttpGet(buildURI(req))
+    val request = req.method match {
+      case "GET" =>
+        new HttpGet(buildURI(req))
+      case "POST" =>
+        val post = new HttpPost(buildURI(req))
+        req.body match {
+          case Some(bytes) =>
+            post.setEntity(new ByteArrayEntity(bytes))
+          case None =>
+        }
+        post
+    }
     val c = HttpClients.createDefault()
     req.basicAuth.foreach{ case (user, pass) =>
       val creds = new UsernamePasswordCredentials(user, pass)
       val context = HttpClientContext.create()
-      httpGet.addHeader(new BasicScheme().authenticate(creds, httpGet, context))
+      request.addHeader(new BasicScheme().authenticate(creds, request, context))
     }
-    req.headers.foreach{ case (k, v) => httpGet.addHeader(k, v) }
-    c.execute(httpGet)
+    req.headers.foreach{ case (k, v) => request.addHeader(k, v) }
+    c.execute(request)
   }
 
   override protected def request2string(req: httpz.Request) = {

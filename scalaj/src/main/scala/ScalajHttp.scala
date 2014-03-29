@@ -10,16 +10,15 @@ object ScalajHttp{
 
   def apply(req: httpz.Request): Http.Request = {
     val r0 = req.method match {
-      case "GET"      => get(req.url)
-      case "POST"     => post(req.url)
+      case "GET"      => Http.get(req.url)
+      case "POST"     => req.body match {
+        case None        => Http.post(req.url)
+        case Some(bytes) => Http.postData(req.url, bytes)
+      }
     }
-    val r1 = r0.params(req.params).headers(req.headers)
+    val r1 = r0.params(req.params).headers(req.headers).options(OPTIONS)
     req.basicAuth.fold(r1){case (user, pass) => r1.auth(user, pass)}
   }
-
-  private def get(url: String): Http.Request = Http(url).options(OPTIONS)
-
-  private def post(url: String): Http.Request = Http.post(url).options(OPTIONS)
 
 }
 

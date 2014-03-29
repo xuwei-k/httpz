@@ -5,6 +5,7 @@ import scalaz.Endo
 final case class Request(
   url: String,
   method: String = "GET",
+  body: Option[Array[Byte]] = None,
   params: Map[String, String] = Map.empty,
   headers: Map[String, String] = Map.empty,
   basicAuth: Option[(String, String)] = None
