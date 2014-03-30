@@ -15,8 +15,11 @@ abstract class InterpretersTemplate {
       o.decode(r, o.parse(r, request2string(r)))
     } catch {
       case e: Throwable =>
-        o.error(Error.http(e))
+        onHttpError(o, e)
     }
+
+  protected[this] def onHttpError[A](o: One[A], e: Throwable): A =
+    o.error(Error.http(e))
 
   object future {
     val empty: Interpreter[Future] =

@@ -39,9 +39,10 @@ sealed trait Error extends RuntimeException with Product with Serializable {
 }
 
 object Error {
-  final case class Http private[Error] (err: Throwable) extends Error {
-    override def toString = "HttpError(" + err + ")"
-  }
+  final case class Http private[Error] (
+    err: Throwable
+  )(override val toString: String = "HttpError(" + err + ")"
+  ) extends Error
   final case class Parse private[Error] (err: String) extends Error
   final case class Decode private[Error] (
     req: Request, message: String, history: CursorHistory, sourceJson: Json
@@ -54,7 +55,8 @@ object Error {
     ).mkString("DecodeError(",", ",")")
   }
 
-  val http: Throwable => Error = Http
+  val http: Throwable => Error = e => Http(e)()
+  val httpWithToString: (Throwable, String) => Error = (e, str) => Http(e)(str)
   val parse: String => Error = Parse
   val decode: (Request, String, CursorHistory, Json) => Error = Decode
 }
