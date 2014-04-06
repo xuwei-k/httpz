@@ -146,24 +146,14 @@ object build extends Build {
 
   lazy val root = {
     import sbtunidoc.Plugin._
-    val customPackageKeys = Seq(packageDoc in Compile)
 
     Project("root", file(".")).settings(
       baseSettings ++ unidocSettings ++ Seq(
         name := "httpz-all",
-        sources := (sources in UnidocKeys.unidoc in ScalaUnidoc).value,
-        resolvers += Classpaths.typesafeReleases,
-        packageDoc in Compile := {
-          val dir = (UnidocKeys.unidoc in Compile).value
-          val files = (dir ** (-DirectoryFilter)).get.map{f =>
-            f -> IO.relativize((crossTarget in UnidocKeys.unidoc).value / "unidoc", f).get
-          }
-          val out = crossTarget.value / s"httpz-all-${scalaBinaryVersion.value}-${version.value}-javadoc.jar"
-          IO.zip(files, out)
-          out
-        },
-        artifacts <<= sbt.Classpaths.artifactDefs(customPackageKeys),
-        packagedArtifacts <<= sbt.Classpaths.packaged(customPackageKeys)
+        artifacts <<= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
+        packagedArtifacts <<= Classpaths.packaged(Seq(packageDoc in Compile))
+      ) ++ Defaults.packageTaskSettings(
+        packageDoc, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
       ): _*
     ).aggregate(httpz, scalaj, dispatch, apache)
   }
