@@ -100,6 +100,7 @@ object build extends Build {
         </developer>
       </developers>
     ),
+    incOptions := incOptions.value.withNameHashing(true),
     description := "purely functional http client",
     showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
       java.awt.Desktop.getDesktop.open(out / "index.html")
