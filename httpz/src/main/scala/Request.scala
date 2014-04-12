@@ -17,6 +17,17 @@ final case class Request(
   def addParams(p: (String, String) *): Request =
     copy(params = this.params ++ p.toMap)
 
+  def addParamOpt(k: String, v: Option[String]): Request =
+    v match {
+      case Some(value) =>
+        copy(params = this.params + (k -> value))
+      case None =>
+        this
+    }
+
+  def addParamsOpt(p: (String, Option[String]) *): Request =
+    copy(params = this.params ++ p.collect{case (k, Some(v)) => k -> v}.toMap)
+
   def addHeader(k: String, v: String): Request =
     copy(headers = this.headers + (k -> v))
 
@@ -49,7 +60,16 @@ object Request {
   def params(p: (String, String) *): Config =
     Endo(_.addParams(p: _*))
 
+  def paramOpt(k: String, v: Option[String]): Config =
+    Endo(_.addParamOpt(k, v))
+
+  def paramsOpt(p: (String, Option[String])*): Config =
+    Endo(_.addParamsOpt(p: _*))
+
   def auth(user: String, pass: String): Config =
     Endo(_.auth(user, pass))
+
+  def method(methodName: String): Config =
+    Endo(_.copy(method = methodName))
 }
 
