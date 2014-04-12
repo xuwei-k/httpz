@@ -14,6 +14,8 @@ object build extends Build {
 
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
+  val testSetting = TaskKey[Unit]("runTests") := (run in Test).toTask("").value
+
   val updateReadme = { state: State =>
     val extracted = Project.extract(state)
     val scalaV = extracted get scalaBinaryVersion
@@ -100,6 +102,7 @@ object build extends Build {
         </developer>
       </developers>
     ),
+    fork in Test := true,
     incOptions := incOptions.value.withNameHashing(true),
     description := "purely functional http client",
     pomPostProcess := { node =>
@@ -131,29 +134,42 @@ object build extends Build {
     baseSettings : _*
   ).settings(
     name := "httpz-scalaj",
+    testSetting,
     libraryDependencies ++= Seq(
       "org.scalaj"  %% "scalaj-http" % "0.3.14"
     )
-  ).dependsOn(httpz)
+  ).dependsOn(httpz, tests % "test")
 
   lazy val dispatch = Project("dispatch", file("dispatch")).settings(
     baseSettings : _*
   ).settings(
     name := "httpz-dispatch",
+    testSetting,
     libraryDependencies ++= Seq(
       "net.databinder" %% "dispatch-http" % "0.8.10"
     )
-  ).dependsOn(httpz)
+  ).dependsOn(httpz, tests % "test")
 
   lazy val apache = Project("apache", file("apache")).settings(
     baseSettings : _*
   ).settings(
     name := "httpz-apache",
+    testSetting,
     libraryDependencies ++= Seq(
       "org.apache.httpcomponents" % "httpclient" % "4.3.3"
     )
-  ).dependsOn(httpz)
+  ).dependsOn(httpz, tests % "test")
 
+  lazy val tests = Project("tests", file("tests")).settings(
+    baseSettings : _*
+  ).settings(
+    libraryDependencies ++= ("filter" :: "jetty" :: Nil).map(m =>
+      "net.databinder" %% s"unfiltered-$m" % "0.7.1"
+    ),
+    publishArtifact := false,
+    publish := {},
+    publishLocal := {}
+  ).dependsOn(httpz)
 
   lazy val root = {
     import sbtunidoc.Plugin._
@@ -166,7 +182,7 @@ object build extends Build {
       ) ++ Defaults.packageTaskSettings(
         packageDoc, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
       ): _*
-    ).aggregate(httpz, scalaj, dispatch, apache)
+    ).aggregate(httpz, scalaj, dispatch, apache, tests)
   }
 
 
