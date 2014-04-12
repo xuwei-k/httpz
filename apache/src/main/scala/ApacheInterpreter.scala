@@ -6,7 +6,7 @@ import java.net.URI
 
 import org.apache.http.{Header, HttpStatus, HttpEntity, StatusLine}
 import org.apache.http.util.EntityUtils
-import org.apache.http.client.methods.{HttpGet, HttpPost}
+import org.apache.http.client.methods._
 import org.apache.http.client.protocol.HttpClientContext
 import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -31,18 +31,35 @@ object ApacheInterpreter extends InterpretersTemplate {
     resource.close
   }
 
+  private def setByteArrayEntity(req: HttpEntityEnclosingRequestBase, body: Option[Array[Byte]]) = {
+    body match {
+      case Some(bytes) =>
+       req.setEntity(new ByteArrayEntity(bytes))
+      case None =>
+    }
+    req
+  }
+
   private def executeRequest(req: httpz.Request) = {
+    val uri = buildURI(req)
     val request = req.method match {
       case "GET" =>
-        new HttpGet(buildURI(req))
-      case "POST" =>
-        val post = new HttpPost(buildURI(req))
-        req.body match {
-          case Some(bytes) =>
-            post.setEntity(new ByteArrayEntity(bytes))
-          case None =>
+        new HttpGet(uri)
+      case "HEAD" =>
+        new HttpHead(uri)
+      case "DELETE" =>
+        new HttpDelete(uri)
+      case "OPTIONS" =>
+        new HttpOptions(uri)
+      case "TRACE" =>
+        new HttpTrace(uri)
+      case other =>
+        val r = other match {
+          case "PUT" => new HttpPut(uri)
+          case "PATCH" => new HttpPatch(uri)
+          case "POST" => new HttpPost(uri)
         }
-        post
+        setByteArrayEntity(r, req.body)
     }
     val c = HttpClients.createDefault()
     req.basicAuth.foreach{ case (user, pass) =>
