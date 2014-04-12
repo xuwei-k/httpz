@@ -12,7 +12,9 @@ package object dispatchclassic {
     import dispatch.classic._
     val r0 = url(r.url) <:< (userAgentHeader ++ r.headers) <<? r.params
     val req = r.body.fold(r0)(r0 << _)
-    r.basicAuth.fold(req){case (user, pass) => req.as(user, pass)}.as_str
+    r.basicAuth.fold(req){case (user, pass) =>
+      req.as(user, pass)
+    }.copy(method = r.method).as_str
   }
 }
 
