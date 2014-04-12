@@ -2,7 +2,7 @@ package httpz
 
 import argonaut._
 
-sealed trait Error extends RuntimeException with Product with Serializable {
+sealed abstract class Error(e: Option[Throwable] = None) extends RuntimeException(e.orNull) with Product with Serializable {
   import Error._
 
   def httpOr[A](z: => A, f: Throwable => A): A =
@@ -42,7 +42,7 @@ object Error {
   final case class Http private[Error] (
     err: Throwable
   )(override val toString: String = "HttpError(" + err + ")"
-  ) extends Error
+  ) extends Error(Some(err))
   final case class Parse private[Error] (err: String) extends Error
   final case class Decode private[Error] (
     req: Request, message: String, history: CursorHistory, sourceJson: Json
