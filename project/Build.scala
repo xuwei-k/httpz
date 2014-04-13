@@ -180,7 +180,7 @@ object build extends Build {
         artifacts <<= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
         packagedArtifacts <<= Classpaths.packaged(Seq(packageDoc in Compile))
       ) ++ Defaults.packageTaskSettings(
-        packageDoc, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
+        packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
       ): _*
     ).aggregate(httpz, scalaj, dispatch, apache, tests)
   }
