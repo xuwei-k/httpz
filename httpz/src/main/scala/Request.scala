@@ -71,5 +71,8 @@ object Request {
 
   def method(methodName: String): Config =
     Endo(_.copy(method = methodName))
+
+  def body(bytes: Array[Byte]): Config =
+    Endo(_.copy(body = Option(bytes)))
 }
 
