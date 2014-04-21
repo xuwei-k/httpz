@@ -2,15 +2,11 @@ language: scala
 
 scala:
   - 2.10.4
+  - 2.11.0
 
 jdk:
   - oraclejdk7
   - oraclejdk8
 
-script: sbt ++${TRAVIS_SCALA_VERSION} runTests $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
-
-env:
-  global:
-    - secure: "ht3Qrp03kHf/gRU5/KwWfFrLkpjAmib/wnTWWLevzhBC/UGmXcz0oCI3ENMDVsdP/Qi22G8U+pjW6WrdDvsswdT/hcO2CH/jJ8EZdrCDz3vsOy4sPKU8QPesWR4dOCJwTfPj43/TuqA69gkKztBb14M3Di2ghY/3XVj+JZc1j9M="
-    - secure: "qoF+ZQbPGjjEZ9LFv9QwjngtiHqvMEicXtX67qGw16h4c9axTS2vt9+S+mAQHWJ4VfMqfFZJkhbEhXIk3SGf1Q6hA2l3vw+2bcDJljK2xZRaArD+8bj+gqLtnXKpLvWzAFxMCv3ZxROON2qlKRfKL4+O37OGGzV2DBQ/XeRcT9w="
+script: sbt ++${TRAVIS_SCALA_VERSION} httpz/compile apache/compile apache/runTests dispatch/compile dispatch/runTests
 

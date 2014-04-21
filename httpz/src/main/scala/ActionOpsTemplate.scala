@@ -2,7 +2,6 @@ package httpz
 
 import scalaz.{One => _, Two => _, _}
 import scalaz.concurrent.{Future, Task}
-import Z._
 
 trait ActionOpsTemplate[E, A] extends Any {
 

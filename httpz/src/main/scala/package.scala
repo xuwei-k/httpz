@@ -5,13 +5,16 @@ package object httpz{
 
   type InterpreterF[F[_]] = RequestF ~> F
 
-  type Requests[A] = Z.FreeC[RequestF, A]
+  type Requests[+A] = Free[RequestF, A]
 
   type ErrorNel = NonEmptyList[Error]
 
-  type ActionE[E, A] = EitherT[Requests, E, A]
-  type Action[A] = EitherT[Requests, Error, A]
-  type ActionNel[A] = EitherT[Requests, ErrorNel, A]
+  type ActionE[+E, +A] = EitherT[Requests, E, A]
+  type Action[+A] = EitherT[Requests, Error, A]
+  type ActionNel[+A] = EitherT[Requests, ErrorNel, A]
+
+  private[httpz] def liftF[S[+_], A](value: => S[A])(implicit S: Functor[S]): Free[S, A] =
+    Free.Suspend(S.map(value)(Free.Return[S, A]))
 
   def Action[E, A](a: Requests[E \/ A]): ActionE[E, A] = EitherT(a)
 
@@ -30,10 +33,10 @@ package object httpz{
 
   val emptyConfig: Config = Endo.idEndo
 
-  implicit val RequestsMonad: Monad[Requests] =
-    Z.freeCMonad[RequestF]
+  private[httpz] implicit val RequestsMonad: Monad[Requests] =
+    Free.freeMonad[RequestF]
 
-  def actionEMonad[E]: Monad[({type λ[α] = ActionE[E, α]})#λ] =
+  def actionEMonad[E]: Monad[({type λ[+α] = ActionE[E, α]})#λ] =
     EitherT.eitherTMonad[Requests, E]
 
   implicit val ActionMonad: Monad[Action] =
@@ -44,7 +47,6 @@ package object httpz{
 
   def ActionZipAp[E: Semigroup]: Apply[({type λ[α] = ActionE[E, α]})#λ] =
     new Apply[({type λ[α] = ActionE[E, α]})#λ] {
-      import Z._
       override def ap[A, B](fa: => ActionE[E, A])(f: => ActionE[E, A => B]) =
         f.zipWith(fa)(_ apply _)
 

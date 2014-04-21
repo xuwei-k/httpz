@@ -1,13 +1,15 @@
 package httpz
 
-import scalaz.\/
+import scalaz.{\/, Functor}
 import RequestF._
 
-sealed abstract class RequestF[A] extends Product with Serializable {
+sealed abstract class RequestF[+A] extends Product with Serializable {
   def mapRequest(config: Config): RequestF[A] = this match {
     case o @ One() => o.cp(req = config(o.req))
     case t @ Two() => two(t.x.mapRequest(config), t.y.mapRequest(config))(t.f)
   }
+
+  private[httpz] def map[B](g: A => B): RequestF[B]
 }
 
 object RequestF {
@@ -22,6 +24,9 @@ object RequestF {
     def cp(
       req: Request = req, error: Error => A = error, parse: (Request, String) => B = parse, decode: (Request, B) => A = decode
     ): RequestF[A] = one(req, error, parse, decode)
+
+    private[httpz] def map[C](f: A => C): RequestF[C] =
+      one[C, B](req, error andThen f, parse, (r, s) => f(decode(r, s)))
   }
 
   sealed abstract case class Two[A]() extends RequestF[A] {
@@ -32,6 +37,8 @@ object RequestF {
     def x: ActionE[E1, X]
     def y: ActionE[E2, Y]
     def f: (E1 \/ X, E2 \/ Y) => A
+    def map[B](g: A => B): RequestF[B] =
+      two(x, y)((a, b) => g(f(a, b)))
   }
 
   def one[A, B0](req0: Request, error0: Error => A, parse0: (Request, String) => B0, decode0: (Request, B0) => A): RequestF[A] =
@@ -54,5 +61,10 @@ object RequestF {
       def f = f0
     }
 
+  implicit val requestFInstance: Functor[RequestF] =
+    new Functor[RequestF] {
+      def map[A, B](a: RequestF[A])(f: A => B) =
+        a map f
+    }
 }
 
