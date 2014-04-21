@@ -7,7 +7,7 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 
-script: sbt ++${TRAVIS_SCALA_VERSION} runTests $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
+script: sbt ++${TRAVIS_SCALA_VERSION} test runTests $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
 env:
   global:
