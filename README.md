@@ -8,48 +8,20 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.9"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.10-RC1-scalaz70"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.9"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.10-RC1-scalaz70"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.9"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.10-RC1-scalaz70"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.10/0.2.9/httpz-all_2.10-0.2.9-javadoc.jar/!/index.html)
-
-
-### snapshot version
-
-```scala
-resolvers += Opts.resolver.sonatypeSnapshots
-
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.10-SNAPSHOT"
-```
-
-or
-
-```scala
-resolvers += Opts.resolver.sonatypeSnapshots
-
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.10-SNAPSHOT"
-```
-
-or
-
-```scala
-resolvers += Opts.resolver.sonatypeSnapshots
-
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.10-SNAPSHOT"
-```
-
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.10/0.2.10-SNAPSHOT/httpz-all_2.10-0.2.10-SNAPSHOT-javadoc.jar/!/index.html)
-
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.10/0.2.10-RC1-scalaz70/httpz-all_2.10-0.2.10-RC1-scalaz70-javadoc.jar/!/index.html)
 
