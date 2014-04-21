@@ -8,5 +8,5 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 
-script: sbt ++${TRAVIS_SCALA_VERSION} httpz/compile apache/compile apache/runTests dispatch/compile dispatch/runTests
+script: sbt ++${TRAVIS_SCALA_VERSION} native-client/test httpz/compile native/runTests apache/compile apache/runTests dispatch/compile dispatch/runTests
 

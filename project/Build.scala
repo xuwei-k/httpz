@@ -21,7 +21,7 @@ object build extends Build {
     val scalaV = extracted get scalaBinaryVersion
     val v = extracted get version
     val org =  extracted get organization
-    val modules = ("scalaj" :: "apache" :: "dispatch" :: Nil).map("httpz-" + _)
+    val modules = ("native" :: "scalaj" :: "apache" :: "dispatch" :: Nil).map("httpz-" + _)
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
@@ -160,6 +160,26 @@ object build extends Build {
     )
   ).dependsOn(httpz, tests % "test")
 
+  lazy val nativeClient = Project("native-client", file("native-client")).settings(
+    baseSettings : _*
+  ).settings(
+    name := "httpz-native-client",
+    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
+    libraryDependencies ++= (
+      ("junit"                % "junit"              % "4.10"   % "test") ::
+      ("com.novocode"         % "junit-interface"    % "0.8"    % "test") ::
+      ("com.github.kristofa"  % "mock-http-server"   % "1.3"    % "test") ::
+      Nil
+    )
+  )
+
+  lazy val native = Project("native", file("native")).settings(
+    baseSettings : _*
+  ).settings(
+    name := "httpz-native",
+    testSetting
+  ).dependsOn(httpz, nativeClient, tests % "test")
+
   lazy val tests = Project("tests", file("tests")).settings(
     baseSettings : _*
   ).settings(
@@ -182,7 +202,7 @@ object build extends Build {
       ) ++ Defaults.packageTaskSettings(
         packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
       ): _*
-    ).aggregate(httpz, scalaj, dispatch, apache, tests)
+    ).aggregate(httpz, scalaj, dispatch, apache, native, nativeClient, tests)
   }
 
 
