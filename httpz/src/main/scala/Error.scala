@@ -43,7 +43,9 @@ object Error {
     err: Throwable
   )(override val toString: String = "HttpError(" + err + ")"
   ) extends Error(Some(err))
-  final case class Parse private[Error] (err: String) extends Error
+  final case class Parse private[Error] (err: String) extends Error{
+    override def getMessage = err
+  }
   final case class Decode private[Error] (
     req: Request, message: String, history: CursorHistory, sourceJson: Json
   ) extends Error {
