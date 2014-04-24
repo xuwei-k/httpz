@@ -6,7 +6,10 @@ abstract class Tests(
   interpreter: InterpretersTemplate,
   methods: List[String] = Tests.defaultTestMethods
 ){
-  final def main(args: Array[String]): Unit = Tests.test(interpreter, methods)
+  final def main(args: Array[String]): Unit = {
+    Tests.test(interpreter, methods)
+    Httpbin.check(interpreter)
+  }
 }
 
 object Tests {

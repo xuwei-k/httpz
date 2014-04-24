@@ -138,7 +138,7 @@ object build extends Build {
     libraryDependencies ++= Seq(
       "org.scalaj"  %% "scalaj-http" % "0.3.14"
     )
-  ).dependsOn(httpz, tests % "test")
+  ).dependsOn(httpz, tests % "test->test")
 
   lazy val dispatch = Project("dispatch", file("dispatch")).settings(
     baseSettings : _*
@@ -148,7 +148,7 @@ object build extends Build {
     libraryDependencies ++= Seq(
       "net.databinder" %% "dispatch-http" % "0.8.10"
     )
-  ).dependsOn(httpz, tests % "test")
+  ).dependsOn(httpz, tests % "test->test")
 
   lazy val apache = Project("apache", file("apache")).settings(
     baseSettings : _*
@@ -158,7 +158,7 @@ object build extends Build {
     libraryDependencies ++= Seq(
       "org.apache.httpcomponents" % "httpclient" % "4.3.3"
     )
-  ).dependsOn(httpz, tests % "test")
+  ).dependsOn(httpz, tests % "test->test")
 
   lazy val nativeClient = Project("native-client", file("native-client")).settings(
     baseSettings : _*
@@ -178,7 +178,7 @@ object build extends Build {
   ).settings(
     name := "httpz-native",
     testSetting
-  ).dependsOn(httpz, nativeClient, tests % "test")
+  ).dependsOn(httpz, nativeClient, tests % "test->test")
 
   lazy val tests = Project("tests", file("tests")).settings(
     baseSettings : _*
@@ -186,6 +186,7 @@ object build extends Build {
     libraryDependencies ++= ("filter" :: "jetty" :: Nil).map(m =>
       "net.databinder" %% s"unfiltered-$m" % "0.7.1"
     ),
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     publishArtifact := false,
     publish := {},
     publishLocal := {}
