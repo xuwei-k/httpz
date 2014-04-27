@@ -137,7 +137,7 @@ object build extends Build {
     name := "httpz-scalaj",
     testSetting,
     libraryDependencies ++= Seq(
-      "org.scalaj"  %% "scalaj-http" % "0.3.14"
+      "org.scalaj" %% "scalaj-http" % "0.3.15"
     )
   ).dependsOn(httpz, tests % "test")
 
