@@ -85,7 +85,7 @@ object build extends Build {
     licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
     scalacOptions := Seq("-deprecation", "-unchecked", "-Xlint", "-language:_"),
     scalaVersion := "2.10.4",
-    crossScalaVersions := scalaVersion.value :: Nil,
+    crossScalaVersions := scalaVersion.value :: "2.11.0" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
