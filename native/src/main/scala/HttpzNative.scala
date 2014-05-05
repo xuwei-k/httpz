@@ -1,8 +1,6 @@
 package httpz
 package native
 
-import scalaz.Endo
-
 object HttpzNative{
 
   def apply(req: httpz.Request): Http.Request = {

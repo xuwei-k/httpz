@@ -2,7 +2,6 @@ package httpz
 package scalajhttp
 
 import scalaj.http._
-import scalaz.Endo
 
 object ScalajHttp{
 

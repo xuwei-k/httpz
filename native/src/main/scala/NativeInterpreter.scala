@@ -1,8 +1,6 @@
 package httpz
 package native
 
-import scalaz.{One => _, Two => _, _}
-
 object NativeInterpreter extends InterpretersTemplate {
 
   protected override def request2string(req: Request) =
