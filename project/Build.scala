@@ -91,7 +91,7 @@ object build extends Build {
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
-        "-sourcepath", (baseDirectory in LocalProject("root")).value.getAbsolutePath,
+        "-sourcepath", (baseDirectory in LocalRootProject).value.getAbsolutePath,
         "-doc-source-url", s"https://github.com/xuwei-k/httpz/tree/${tag}€{FILE_PATH}.scala"
       )
     },
