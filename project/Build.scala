@@ -86,7 +86,8 @@ object build extends Build {
       else
         Nil
     },
-    scalaVersion := "2.10.4",
+    scalaVersion := "2.11.1",
+    crossScalaVersions := scalaVersion.value :: "2.10.4" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -132,8 +133,8 @@ object build extends Build {
   ).settings(
     name := "httpz",
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
-      "io.argonaut" %% "argonaut" % "6.1-M2"
+      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M7",
+      "io.argonaut" %% "argonaut" % "6.1-M3"
     )
   )
 

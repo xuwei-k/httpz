@@ -5,7 +5,7 @@ package object httpz{
 
   type InterpreterF[F[_]] = RequestF ~> F
 
-  type Requests[A] = Z.FreeC[RequestF, A]
+  type Requests[A] = Free.FreeC[RequestF, A]
 
   type ErrorNel = NonEmptyList[Error]
 
@@ -44,7 +44,6 @@ package object httpz{
 
   def ActionZipAp[E: Semigroup]: Apply[({type λ[α] = ActionE[E, α]})#λ] =
     new Apply[({type λ[α] = ActionE[E, α]})#λ] {
-      import Z._
       override def ap[A, B](fa: => ActionE[E, A])(f: => ActionE[E, A => B]) =
         f.zipWith(fa)(_ apply _)
 

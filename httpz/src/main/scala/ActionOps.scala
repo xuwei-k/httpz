@@ -1,7 +1,6 @@
 package httpz
 
 import scalaz.{One => _, Two => _, _}
-import Z._
 
 final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
@@ -17,7 +16,7 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
     Z.interpret(self.run)(f)
 
   def zipWithError[B, C, E1, E2](that: ActionE[E1, B])(f: (E \/ A, E1 \/ B) => E2 \/ C): ActionE[E2, C] =
-    Action(Z.freeC(RequestF.two(self, that)(f)))
+    Action(Free.liftFC(RequestF.two(self, that)(f)))
 
   def zip[B](that: ActionE[E, B])(implicit E: Semigroup[E]): ActionE[E, (A, B)] =
     zipWith(that)(Tuple2.apply)
