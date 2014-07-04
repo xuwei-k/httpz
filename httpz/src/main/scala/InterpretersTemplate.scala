@@ -9,6 +9,9 @@ abstract class InterpretersTemplate {
 
   protected[this] def request2string(req: Request): String
 
+  protected[this] def task[A](one: One[A], conf: Config): Task[A] =
+    Task(runOne(one, conf))
+
   private def runOne[A](o: One[A], conf: Config): A =
     try {
       val r = conf(o.req)
@@ -29,7 +32,10 @@ abstract class InterpretersTemplate {
       new Interpreter[Future] {
         def go[A](a: RequestF[A]) = a match {
           case o @ One() =>
-            Future(runOne(o, conf))
+            task(o, conf).get.map{
+              case \/-(r) => r
+              case -\/(l) => onHttpError(o, l)
+            }
           case t @ Two() =>
             Nondeterminism[Future].mapBoth(run(t.x), run(t.y))(t.f)
         }
@@ -44,7 +50,7 @@ abstract class InterpretersTemplate {
       new Interpreter[Task] {
         def go[A](a: RequestF[A]) = a match {
           case o @ One() =>
-            Task(runOne(o, conf))
+            task(o, conf)
           case t @ Two() =>
             Nondeterminism[Task].mapBoth(run(t.x), run(t.y))(t.f)
         }
