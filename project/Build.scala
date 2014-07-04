@@ -21,7 +21,7 @@ object build extends Build {
     val scalaV = extracted get scalaBinaryVersion
     val v = extracted get version
     val org =  extracted get organization
-    val modules = ("native" :: "scalaj" :: "apache" :: "dispatch" :: Nil).map("httpz-" + _)
+    val modules = ("native" :: "scalaj" :: "apache" :: "dispatch" :: "async" :: Nil).map("httpz-" + _)
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
@@ -138,6 +138,16 @@ object build extends Build {
     )
   )
 
+  lazy val async = Project("async", file("async")).settings(
+    baseSettings : _*
+  ).settings(
+    name := "httpz-async",
+    testSetting,
+    libraryDependencies ++= Seq(
+      "com.ning" % "async-http-client" % "1.8.12"
+    )
+  ).dependsOn(httpz, tests % "test")
+
   lazy val scalaj = Project("scalaj", file("scalaj")).settings(
     baseSettings : _*
   ).settings(
@@ -210,7 +220,7 @@ object build extends Build {
       ) ++ Defaults.packageTaskSettings(
         packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
       ): _*
-    ).aggregate(httpz, scalaj, dispatch, apache, native, nativeClient, tests)
+    ).aggregate(httpz, scalaj, async, dispatch, apache, native, nativeClient, tests)
   }
 
 

@@ -2,3 +2,5 @@ target
 *.class
 *.jar
 *.swp
+.idea/
+.idea_modules/
