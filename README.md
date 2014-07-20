@@ -34,6 +34,12 @@ or
 libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.2.11"
 ```
 
+or
+
+```scala
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.11"
+```
+
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.2.11/httpz-all_2.11-0.2.11-javadoc.jar/!/index.html)
 
@@ -68,6 +74,14 @@ or
 resolvers += Opts.resolver.sonatypeSnapshots
 
 libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.2.12-SNAPSHOT"
+```
+
+or
+
+```scala
+resolvers += Opts.resolver.sonatypeSnapshots
+
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.12-SNAPSHOT"
 ```
 
 
