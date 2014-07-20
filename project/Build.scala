@@ -79,7 +79,15 @@ object build extends Build {
     organization := "com.github.xuwei-k",
     homepage := Some(url("https://github.com/xuwei-k/httpz")),
     licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
-    scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xlint", "-language:_"),
+    scalacOptions ++= (
+      "-deprecation" ::
+      "-unchecked" ::
+      "-Xlint" ::
+      "-language:existentials" ::
+      "-language:higherKinds" ::
+      "-language:implicitConversions" ::
+      Nil
+    ),
     scalacOptions ++= {
       if(scalaVersion.value.startsWith("2.11"))
         Seq("-Ywarn-unused", "-Ywarn-unused-import")
