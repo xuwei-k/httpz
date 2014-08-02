@@ -152,7 +152,7 @@ object build extends Build {
     name := "httpz-async",
     testSetting,
     libraryDependencies ++= Seq(
-      "com.ning" % "async-http-client" % "1.8.12"
+      "com.ning" % "async-http-client" % "1.8.13"
     )
   ).dependsOn(httpz, tests % "test")
 
@@ -182,7 +182,7 @@ object build extends Build {
     name := "httpz-apache",
     testSetting,
     libraryDependencies ++= Seq(
-      "org.apache.httpcomponents" % "httpclient" % "4.3.4"
+      "org.apache.httpcomponents" % "httpclient" % "4.3.5"
     )
   ).dependsOn(httpz, tests % "test")
 
