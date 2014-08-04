@@ -141,8 +141,8 @@ object build extends Build {
   ).settings(
     name := "httpz",
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M7",
-      "io.argonaut" %% "argonaut" % "6.1-M3"
+      "org.scalaz" %% "scalaz-concurrent" % "7.1.0",
+      "io.argonaut" %% "argonaut" % "6.1-M4"
     )
   )
 

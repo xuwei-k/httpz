@@ -4,15 +4,6 @@ import scalaz._, Free._
 
 object Z {
 
-  // TODO will be remove https://github.com/scalaz/scalaz/pull/731/files
-  final def interpret[M[_], N[_], A](free: FreeC[N, A])(f: N ~> M)(implicit M: Monad[M]): M[A] = {
-    def go(a: FreeC[N, A]): M[A] = a.resume match {
-      case \/-(c) => M.point(c)
-      case -\/(c) => M.bind(f(c.fi))(x => go(c.k(x)))
-    }
-    go(free)
-  }
-
   private[httpz] def freeCMonad[S[_]]: Monad[({type λ[α] = FreeC[S, α]})#λ] =
     Free.freeMonad[({type λ[α] = Coyoneda[S, α]})#λ]
 

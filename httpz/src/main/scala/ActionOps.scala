@@ -13,7 +13,7 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
   )
 
   def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[E \/ A] =
-    Z.interpret(self.run)(f)
+    Free.runFC(self.run)(f)
 
   def zipWithError[B, C, E1, E2](that: ActionE[E1, B])(f: (E \/ A, E1 \/ B) => E2 \/ C): ActionE[E2, C] =
     Action(Free.liftFC(RequestF.two(self, that)(f)))
