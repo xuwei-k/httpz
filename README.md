@@ -49,7 +49,7 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.13"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.12-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.14-SNAPSHOT"
 ```
 
 or
@@ -57,7 +57,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.12-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.14-SNAPSHOT"
 ```
 
 or
@@ -65,7 +65,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.12-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.14-SNAPSHOT"
 ```
 
 or
@@ -73,7 +73,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.2.12-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.2.14-SNAPSHOT"
 ```
 
 or
@@ -81,10 +81,10 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.12-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.14-SNAPSHOT"
 ```
 
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.2.12-SNAPSHOT/httpz-all_2.11-0.2.12-SNAPSHOT-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.2.14-SNAPSHOT/httpz-all_2.11-0.2.14-SNAPSHOT-javadoc.jar/!/index.html)
 
 
