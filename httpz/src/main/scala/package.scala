@@ -5,6 +5,8 @@ package object httpz{
 
   type InterpreterF[F[_]] = RequestF ~> F
 
+  type Interpreter[F[_]] = NaturalTransMonad[RequestF, F]
+
   type Requests[A] = Free.FreeC[RequestF, A]
 
   type ErrorNel = NonEmptyList[Error]

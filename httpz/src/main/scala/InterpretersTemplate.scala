@@ -5,7 +5,7 @@ import scalaz.Id.Id
 import scalaz.concurrent.{Future, Task}
 import RequestF._
 
-abstract class InterpretersTemplate {
+abstract class InterpretersTemplate extends InterpretersTemplateF[RequestF] {
 
   protected[this] def request2string(req: Request): String
 
@@ -24,7 +24,7 @@ abstract class InterpretersTemplate {
   protected[this] def onHttpError[A](o: One[A], e: Throwable): A =
     o.error(Error.http(e))
 
-  object future {
+  override object future extends T[Future] {
     val empty: Interpreter[Future] =
       apply(emptyConfig)
 
@@ -42,7 +42,7 @@ abstract class InterpretersTemplate {
       }
   }
 
-  object task {
+  override object task extends T[Task] {
     val empty: Interpreter[Task] =
       apply(emptyConfig)
 
@@ -57,7 +57,7 @@ abstract class InterpretersTemplate {
       }
   }
 
-  object sequential {
+  override object sequential extends T[Id] {
     val empty: Interpreter[Id] =
       apply(emptyConfig)
 
@@ -72,7 +72,10 @@ abstract class InterpretersTemplate {
       }
   }
 
-  object times {
+  override object times extends T[Times] {
+    @deprecated("use futureTimes instead", "0.2.14")
+    val future = futureTimes
+
     val empty: Interpreter[Times] =
       apply(emptyConfig)
 
@@ -86,7 +89,7 @@ abstract class InterpretersTemplate {
         }
       }
 
-    private def go1[A](o: One[A], conf: Config): (List[Time], A) = {
+    private[InterpretersTemplate] def go1[A](o: One[A], conf: Config): (List[Time], A) = {
       val r = conf(o.req)
       val start = System.nanoTime
       try {
@@ -105,31 +108,34 @@ abstract class InterpretersTemplate {
           (Time.Failure(r, e, System.nanoTime - start) :: Nil) -> o.error(Error.http(e))
       }
     }
+  }
 
-    object future {
-      private[this] val FutureApParallel = new Applicative[Future] {
-        override def point[A](a: => A) = Future(a)
-        override def ap[A,B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f,a)(_(_))
-        override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
-          Nondeterminism[Future].mapBoth(a, b)(f)
-      }
-      import std.list._
+  override object futureTimes extends T[FutureTimes] {
+    private[this] val FutureApParallel = new Applicative[Future] {
+      override def point[A](a: => A) = Future(a)
 
-      private[this] val G = WriterT.writerTApplicative(Monoid[List[Time]], FutureApParallel)
+      override def ap[A, B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f, a)(_(_))
 
-      val empty: Interpreter[FutureTimes] =
-        apply(emptyConfig)
-
-      def apply(conf: Config): Interpreter[FutureTimes] =
-        new Interpreter[FutureTimes] {
-          def go[A](a: RequestF[A]) = a match {
-            case o @ One() =>
-              WriterT(Future(go1(o, conf)))
-            case t @ Two() =>
-              G.apply2(run(t.x), run(t.y))(t.f)
-          }
-        }
+      override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
+        Nondeterminism[Future].mapBoth(a, b)(f)
     }
+
+    import std.list._
+
+    private[this] val G = WriterT.writerTApplicative(Monoid[List[Time]], FutureApParallel)
+
+    val empty: Interpreter[FutureTimes] =
+      apply(emptyConfig)
+
+    def apply(conf: Config): Interpreter[FutureTimes] =
+      new Interpreter[FutureTimes] {
+        def go[A](a: RequestF[A]) = a match {
+          case o @ One() =>
+            WriterT(Future(times.go1(o, conf)))
+          case t @ Two() =>
+            G.apply2(run(t.x), run(t.y))(t.f)
+        }
+      }
   }
 }
 

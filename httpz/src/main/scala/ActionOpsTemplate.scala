@@ -28,10 +28,10 @@ trait ActionOpsTemplate[E, A] extends Any {
     interpreter.times.apply(conf).run(self)
 
   def futureWithTime: Future[(List[Time], E \/ A)] =
-    interpreter.times.future.empty.run(self).run
+    interpreter.futureTimes.empty.run(self).run
 
   def futureWithTime(conf: Config): Future[(List[Time], E \/ A)] =
-    interpreter.times.future(conf).run(self).run
+    interpreter.futureTimes(conf).run(self).run
 
   def interpret: E \/ A =
     interpreter.sequential.empty.run(self)
