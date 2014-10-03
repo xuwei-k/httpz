@@ -10,15 +10,9 @@ object Core extends Core[RequestF] {
    */
   implicit def instance[F[_]](implicit I: Inject[RequestF, F]) =
     new Core[F]
-}
 
-sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
-
-  private[this] def lift[A, B](f: RequestF[A \/ B]) =
-    EitherT[({type l[a] = FreeC[F, a]})#l, A, B](Free.liftFC(I.inj(f)))
-
-  def json[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, A] =
-    lift(RequestF.one[Error \/ A, Error \/ Json](
+  def json1[A](req: Request)(implicit A: DecodeJson[A]): RequestF[Error \/ A] =
+    RequestF.one[Error \/ A, Error \/ Json](
       req,
       \/.left,
       (request, result) => Parse.parse(result).leftMap(Error.parse),
@@ -28,15 +22,26 @@ sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
            case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json))
         }
       }
-    ))
+    )
 
-  def string(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, String] =
-    lift(RequestF.one[Throwable \/ String, String](
+  def string1(req: Request): RequestF[Throwable \/ String] =
+    RequestF.one[Throwable \/ String, String](
       req,
       \/.left,
       (_, result) => result,
       (_, result) => \/-(result)
-    ))
+    )
+}
 
+sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
+
+  private[this] def lift[A, B](f: RequestF[A \/ B]) =
+    EitherT[({type l[a] = FreeC[F, a]})#l, A, B](Free.liftFC(I.inj(f)))
+
+  def json[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, A] =
+    lift(Core.json1(req))
+
+  def string(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, String] =
+    lift(Core.string1(req))
 }
 
