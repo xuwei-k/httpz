@@ -171,7 +171,7 @@ object build extends Build {
     buildInfoPackage := "httpz.async",
     buildInfoObject := "BuildInfoHttpzAsync",
     libraryDependencies ++= Seq(
-      "com.ning" % "async-http-client" % "1.8.13"
+      "com.ning" % "async-http-client" % "1.8.14"
     )
   ).dependsOn(httpz, tests % "test")
 
@@ -224,7 +224,7 @@ object build extends Build {
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= (
       ("junit"                % "junit"              % "4.11"   % "test") ::
-      ("com.novocode"         % "junit-interface"    % "0.10"   % "test") ::
+      ("com.novocode"         % "junit-interface"    % "0.11"   % "test") ::
       ("com.github.kristofa"  % "mock-http-server"   % "4.0"    % "test") ::
       Nil
     )
@@ -241,7 +241,7 @@ object build extends Build {
     baseSettings : _*
   ).settings(
     libraryDependencies ++= ("filter" :: "jetty" :: Nil).map(m =>
-      "net.databinder" %% s"unfiltered-$m" % "0.8.0"
+      "net.databinder" %% s"unfiltered-$m" % "0.8.2"
     ),
     publishArtifact := false,
     publish := {},
