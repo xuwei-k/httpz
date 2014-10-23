@@ -20,9 +20,9 @@ object Tests {
       runTest(interpreter, server, httpMethods)
     }
 
-  private def useTestServer[A](function: unfiltered.jetty.Http => A): A = {
-    val server = unfiltered.jetty.Http.anylocal
-    server.filter(TestServer).start
+  private def useTestServer[A](function: unfiltered.jetty.Server => A): A = {
+    val server = unfiltered.jetty.Server.anylocal
+    server.plan(TestServer).start
     try{
       function(server)
     } finally {
@@ -33,10 +33,11 @@ object Tests {
 
   private def runTest(
     interpreter: InterpretersTemplate,
-    server: unfiltered.jetty.Http,
+    server: unfiltered.jetty.Server,
     methods: List[String]
   ): Unit = {
-    val url = s"http://localhost:${server.port}/${TestServer.TestPath}"
+    val port = server.ports.headOption.getOrElse(sys.error("ports is empty!"))
+    val url = s"http://localhost:${port}/${TestServer.TestPath}"
     val func: String => Action[Json] = { str =>
       Core.json(Request(
         method = "dummy",
@@ -54,7 +55,7 @@ object Tests {
       import TestServer._
       val method = "GET"
       quote(TestAuthRes) -> Core.json(Request(
-        url = s"http://localhost:${server.port}/${TestServer.TestAuthPath}",
+        url = s"http://localhost:$port/${TestServer.TestAuthPath}",
         method = method,
         basicAuth = Some((TestAuthUser, TestAuthPass))
       ))
