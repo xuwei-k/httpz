@@ -1,6 +1,6 @@
 package httpz
 
-import scalaz.Endo
+import scalaz.{Maybe, Endo}
 
 final case class Request(
   url: String,
@@ -26,7 +26,18 @@ final case class Request(
     }
 
   def addParamsOpt(p: (String, Option[String]) *): Request =
-    copy(params = this.params ++ p.collect{case (k, Some(v)) => k -> v}.toMap)
+    copy(params = this.params ++ p.collect{case (k, Some(v)) => k -> v})
+
+  def addParamsMaybe(p: (String, Maybe[String]) *): Request =
+    copy(params = this.params ++ p.collect{case (k, Maybe.Just(v)) => k -> v})
+
+  def addParamMaybe(k: String, v: Maybe[String]): Request =
+    v match {
+      case Maybe.Just(value) =>
+        copy(params = this.params + (k -> value))
+      case Maybe.Empty() =>
+        this
+    }
 
   def addHeader(k: String, v: String): Request =
     copy(headers = this.headers + (k -> v))
@@ -65,6 +76,12 @@ object Request {
 
   def paramsOpt(p: (String, Option[String])*): Config =
     Endo(_.addParamsOpt(p: _*))
+
+  def paramMaybe(k: String, v: Maybe[String]): Config =
+    Endo(_.addParamMaybe(k, v))
+
+  def paramsMaybe(p: (String, Maybe[String])*): Config =
+    Endo(_.addParamsMaybe(p: _*))
 
   def auth(user: String, pass: String): Config =
     Endo(_.auth(user, pass))
