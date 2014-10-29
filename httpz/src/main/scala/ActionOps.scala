@@ -8,7 +8,7 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
   def mapRequest(f: Config): ActionE[E, A] = Action[E, A](
     Z.mapSuspensionFreeC(self.run, new (RequestF ~> RequestF){
-      def apply[A](a: RequestF[A]) = a.mapRequest(f)
+      def apply[B](a: RequestF[B]) = a.mapRequest(f)
     })
   )
 
