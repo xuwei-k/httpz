@@ -3,6 +3,7 @@ import sbtrelease._
 import xerial.sbt.Sonatype._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
+import sbtbuildinfo.Plugin._
 
 object build extends Build {
 
@@ -45,7 +46,19 @@ object build extends Build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ Seq(
+  final val ScalazVersion = "7.0.6"
+
+  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
+    buildInfoKeys := Seq[BuildInfoKey](
+      organization,
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      scalacOptions,
+      licenses,
+      "scalazVersion" -> ScalazVersion
+    ),
     commands += Command.command("updateReadme")(updateReadme),
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
@@ -140,8 +153,11 @@ object build extends Build {
     baseSettings : _*
   ).settings(
     name := "httpz",
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz",
+    buildInfoObject := "BuildInfoHttpz",
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.0.6",
+      "org.scalaz" %% "scalaz-concurrent" % ScalazVersion,
       "io.argonaut" %% "argonaut" % "6.0.4"
     )
   )
@@ -151,6 +167,9 @@ object build extends Build {
   ).settings(
     name := "httpz-async",
     testSetting,
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz.async",
+    buildInfoObject := "BuildInfoHttpzAsync",
     libraryDependencies ++= Seq(
       "com.ning" % "async-http-client" % "1.8.13"
     )
@@ -161,6 +180,9 @@ object build extends Build {
   ).settings(
     name := "httpz-scalaj",
     testSetting,
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz.scalajhttp",
+    buildInfoObject := "BuildInfoHttpzScalaj",
     libraryDependencies ++= Seq(
       "org.scalaj" %% "scalaj-http" % "0.3.16"
     )
@@ -171,6 +193,9 @@ object build extends Build {
   ).settings(
     name := "httpz-dispatch",
     testSetting,
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz.dispatchclassic",
+    buildInfoObject := "BuildInfoHttpzDispatch",
     libraryDependencies ++= Seq(
       "net.databinder" %% "dispatch-http" % "0.8.10"
     )
@@ -181,6 +206,9 @@ object build extends Build {
   ).settings(
     name := "httpz-apache",
     testSetting,
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz.apachehttp",
+    buildInfoObject := "BuildInfoHttpzApache",
     libraryDependencies ++= Seq(
       "org.apache.httpcomponents" % "httpclient" % "4.3.5"
     )
@@ -190,6 +218,9 @@ object build extends Build {
     baseSettings : _*
   ).settings(
     name := "httpz-native-client",
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoPackage := "httpz.native",
+    buildInfoObject := "BuildInfoHttpzNative",
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= (
       ("junit"                % "junit"              % "4.11"   % "test") ::
