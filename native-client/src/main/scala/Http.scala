@@ -87,6 +87,7 @@ object Http {
     def option(o: HttpOptions.HttpOption):Request = copy(options = o :: options)
 
     def auth(user: String, password: String) = header("Authorization", "Basic " + base64(user + ":" + password))
+    def bearer(token: String): Request = header("Authorization", "Bearer " + token)
 
     def oauth(consumer: Token):Request = oauth(consumer, None, None)
     def oauth(consumer: Token, token: Token):Request = oauth(consumer, Some(token), None)
