@@ -11,6 +11,9 @@ final case class Request(
   basicAuth: Option[(String, String)] = None
 ) {
 
+  def bodyString(string: String): Request =
+    copy(body = Some(string.getBytes("UTF-8")))
+
   def addParam(k: String, v: String): Request =
     copy(params = this.params + (k -> v))
 
@@ -91,5 +94,7 @@ object Request {
 
   def body(bytes: Array[Byte]): Config =
     Endo(_.copy(body = Option(bytes)))
-}
 
+  def bodyString(string: String): Config =
+    Endo(_.bodyString(string))
+}
