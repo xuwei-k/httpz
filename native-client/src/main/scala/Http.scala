@@ -20,7 +20,7 @@ object HttpOptions {
   def method(method: String):HttpOption = c => c.setRequestMethod(method)
   def connTimeout(timeout: Int):HttpOption = c => c.setConnectTimeout(timeout)
   def readTimeout(timeout: Int):HttpOption = c => c.setReadTimeout(timeout)
-  def allowUnsafeSSL:HttpOption = c => c match {
+  val allowUnsafeSSL:HttpOption = {
     case httpsConn: HttpsURLConnection =>
       val hv = new HostnameVerifier() {
         def verify(urlHostName: String, session: SSLSession) = true
