@@ -7,13 +7,13 @@ object ScalajHttp{
 
   val OPTIONS = List(HttpOptions.connTimeout(30000), HttpOptions.readTimeout(30000))
 
-  def apply(req: httpz.Request): Http.Request = {
+  def apply(req: httpz.Request): HttpRequest = {
     val r0 = req.method match {
       case "GET" =>
-        Http.get(req.url)
+        Http(req.url)
       case "POST" => req.body match {
-        case None        => Http.post(req.url)
-        case Some(bytes) => Http.postData(req.url, bytes)
+        case None        => Http(req.url).method("POST")
+        case Some(bytes) => Http(req.url).postData(bytes)
       }
       case other =>
         Http(req.url).method(other)

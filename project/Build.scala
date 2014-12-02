@@ -171,7 +171,7 @@ object build extends Build {
     buildInfoPackage := "httpz.async",
     buildInfoObject := "BuildInfoHttpzAsync",
     libraryDependencies ++= Seq(
-      "com.ning" % "async-http-client" % "1.8.14"
+      "com.ning" % "async-http-client" % "1.9.0"
     )
   ).dependsOn(httpz, tests % "test")
 
@@ -184,7 +184,7 @@ object build extends Build {
     buildInfoPackage := "httpz.scalajhttp",
     buildInfoObject := "BuildInfoHttpzScalaj",
     libraryDependencies ++= Seq(
-      "org.scalaj" %% "scalaj-http" % "0.3.16"
+      "org.scalaj" %% "scalaj-http" % "1.0.1"
     )
   ).dependsOn(httpz, tests % "test")
 
@@ -210,7 +210,7 @@ object build extends Build {
     buildInfoPackage := "httpz.apachehttp",
     buildInfoObject := "BuildInfoHttpzApache",
     libraryDependencies ++= Seq(
-      "org.apache.httpcomponents" % "httpclient" % "4.3.5"
+      "org.apache.httpcomponents" % "httpclient" % "4.3.6"
     )
   ).dependsOn(httpz, tests % "test")
 
@@ -225,7 +225,7 @@ object build extends Build {
     libraryDependencies ++= (
       ("junit"                % "junit"              % "4.11"   % "test") ::
       ("com.novocode"         % "junit-interface"    % "0.11"   % "test") ::
-      ("com.github.kristofa"  % "mock-http-server"   % "4.0"    % "test") ::
+      ("com.github.kristofa"  % "mock-http-server"   % "4.1"    % "test") ::
       Nil
     )
   )

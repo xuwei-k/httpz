@@ -4,13 +4,13 @@ package scalajhttp
 object ScalajInterpreter extends InterpretersTemplate {
 
   protected override def request2string(req: Request) =
-    ScalajHttp(req).asString
+    ScalajHttp(req).asString.body
 
   protected[this] override def onHttpError[A](o: RequestF.One[A], e: Throwable): A =
     e match {
-      case scalaj.http.HttpException(code, msg, body, cause) =>
+      case scalaj.http.HttpException(msg, cause) =>
         val str = Iterator(
-          "code" -> code, "message" -> msg, "body" -> body, "cause" -> cause
+          "message" -> msg, "cause" -> cause
         ).mkString("HttpError(", ",", ")")
         o.error(Error.httpWithToString(e, str))
       case _ =>

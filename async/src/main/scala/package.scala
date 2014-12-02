@@ -27,7 +27,7 @@ package object async {
     builder
       .setUrl(r.url)
       .setHeaders(r.headers.mapValues(v => singletonList(v): JCollection[String]).asJava) // TODO
-      .setParameters(r.params.mapValues(v => singletonList(v): JCollection[String]).asJava)
+      .setQueryParams(r.params.mapValues(v => singletonList(v)).asJava)
       .setMethod(r.method)
 
     r.basicAuth.foreach{ case (user, pass) =>
