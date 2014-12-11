@@ -8,6 +8,8 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 
+sudo: false
+
 script:
   - git config core.whitespace tab-in-indent,trailing-space,space-before-tab,cr-at-eol
   - git show --oneline --check
