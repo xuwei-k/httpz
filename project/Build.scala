@@ -125,14 +125,29 @@ object build extends Build {
   lazy val root = {
     import sbtunidoc.Plugin._
 
+    val sxrSettings = if(Sxr.disableSxr){
+      Nil
+    }else{
+      Sxr.commonSettings(Compile, "unidoc.sxr") ++ Seq(
+        Sxr.packageSxr in Compile <<= (Sxr.packageSxr in Compile).dependsOn(UnidocKeys.unidoc in Compile)
+      ) ++ (
+        httpz :: async :: scalaj :: dispatch :: apache :: nativeClient :: native :: Nil
+      ).map(libraryDependencies <++= libraryDependencies in _)
+    }
+
     Project("root", file(".")).settings(
       Common.baseSettings ++ unidocSettings ++ Seq(
         name := "httpz-all",
-        artifacts <<= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
-        packagedArtifacts <<= Classpaths.packaged(Seq(packageDoc in Compile))
+        artifacts := Nil,
+        packagedArtifacts := Map.empty,
+        artifacts <++= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
+        packagedArtifacts <++= Classpaths.packaged(Seq(packageDoc in Compile)),
+        scalacOptions in UnidocKeys.unidoc += {
+          "-P:sxr:base-directory:" + (sources in UnidocKeys.unidoc in ScalaUnidoc).value.mkString(":")
+        }
       ) ++ Defaults.packageTaskSettings(
         packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
-      ): _*
+      ) ++ sxrSettings : _*
     ).aggregate(httpz, scalaj, async, dispatch, apache, native, nativeClient, tests)
   }
 

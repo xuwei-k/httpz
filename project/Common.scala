@@ -109,6 +109,6 @@ object Common {
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
-  )
+  ) ++ Sxr.subProjectSxr(Compile, "classes.sxr")
 
 }
