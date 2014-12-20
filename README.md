@@ -42,6 +42,7 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.16"
 
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.2.16/httpz-all_2.11-0.2.16-javadoc.jar/!/index.html)
+- [sxr](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.2.16/httpz-all_2.11-0.2.16-sxr.jar/!/index.html)
 
 
 ### snapshot version
