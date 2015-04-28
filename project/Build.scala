@@ -32,7 +32,7 @@ object build extends Build {
     buildInfoObject := "BuildInfoHttpz",
     libraryDependencies ++= Seq(
       "org.scalaz" %% "scalaz-concurrent" % Common.ScalazVersion,
-      "io.argonaut" %% "argonaut" % "6.1-M6"
+      "io.argonaut" %% "argonaut" % "6.1"
     )
   )
 
