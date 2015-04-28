@@ -13,6 +13,12 @@ object Common {
 
   final val ScalazVersion = "7.1.1"
 
+  private[this] val unusedWarnings = (
+    "-Ywarn-unused" ::
+    "-Ywarn-unused-import" ::
+    Nil
+  )
+
   val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
@@ -70,9 +76,9 @@ object Common {
       "-language:implicitConversions" ::
       Nil
     ),
-    scalacOptions in compile ++= {
+    scalacOptions ++= {
       if(scalaVersion.value.startsWith("2.11"))
-        Seq("-Ywarn-unused", "-Ywarn-unused-import")
+        unusedWarnings
       else
         Nil
     },
@@ -113,6 +119,8 @@ object Common {
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
-  ) ++ Sxr.subProjectSxr(Compile, "classes.sxr")
+  ) ++ Sxr.subProjectSxr(Compile, "classes.sxr") ++ Seq(Compile, Test).flatMap(c =>
+    scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
+  )
 
 }
