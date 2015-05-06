@@ -1,1 +1,0 @@
-alias sxr=; set Seq(resolvers += Classpaths.typesafeReleases, addCompilerPlugin("org.scala-sbt.sxr" %% "sxr" % "0.3.0"),scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }) ; test:compile
