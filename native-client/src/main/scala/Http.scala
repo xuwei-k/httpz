@@ -337,7 +337,7 @@ object Http {
           writeBytes("\"" + CrLf)
           writeBytes(ContentType + part.mime + CrLf + CrLf)
 
-          var bytesWritten = 0
+          var bytesWritten: Long = 0L
 
           @annotation.tailrec
           def readOnce(): Unit = {
