@@ -1,6 +1,7 @@
 import sbt._, Keys._
 import sbtrelease._
 import xerial.sbt.Sonatype._
+import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 import sbtbuildinfo.Plugin._
@@ -21,7 +22,7 @@ object Common {
 
   private[this] final val Scala211 = "2.11.6"
 
-  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
+  val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
@@ -33,7 +34,7 @@ object Common {
       "scalazVersion" -> ScalazVersion
     ),
     commands += Command.command("updateReadme")(UpdateReadme.updateReadmeTask),
-    ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+    releaseProcess := Seq[ReleaseStep](
       ReleaseStep{ state =>
         assert(Sxr.disableSxr == false)
         state
