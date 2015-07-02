@@ -20,7 +20,7 @@ object Common {
     Nil
   )
 
-  private[this] final val Scala211 = "2.11.6"
+  private[this] val Scala211 = "2.11.7"
 
   val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
     buildInfoKeys := Seq[BuildInfoKey](
