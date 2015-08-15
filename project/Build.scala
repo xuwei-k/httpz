@@ -1,5 +1,6 @@
 import sbt._, Keys._
 import sbtbuildinfo.Plugin._
+import scalaprops.ScalapropsPlugin.autoImport._
 
 object build extends Build {
 
@@ -26,7 +27,10 @@ object build extends Build {
   lazy val httpz = Project("httpz", file("httpz")).settings(
     Common.baseSettings : _*
   ).settings(
+    scalapropsWithScalazlaws
+  ).settings(
     name := httpzName,
+    scalapropsVersion := "0.1.13",
     sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz",
     buildInfoObject := "BuildInfoHttpz",

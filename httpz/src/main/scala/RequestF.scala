@@ -16,11 +16,11 @@ object RequestF {
     type B
     def req: Request
     def error: Error => A
-    def parse: (Request, String) => B
+    def parse: (Request, Response[ByteArray]) => B
     def decode: (Request, B) => A
     override final def toString = s"RequestF.One(${req.method} ${req.url})"
     def cp(
-      req: Request = req, error: Error => A = error, parse: (Request, String) => B = parse, decode: (Request, B) => A = decode
+      req: Request = req, error: Error => A = error, parse: (Request, Response[ByteArray]) => B = parse, decode: (Request, B) => A = decode
     ): RequestF[A] = one(req, error, parse, decode)
   }
 
@@ -34,7 +34,7 @@ object RequestF {
     def f: (E1 \/ X, E2 \/ Y) => A
   }
 
-  def one[A, B0](req0: Request, error0: Error => A, parse0: (Request, String) => B0, decode0: (Request, B0) => A): RequestF[A] =
+  def one[A, B0](req0: Request, error0: Error => A, parse0: (Request, Response[ByteArray]) => B0, decode0: (Request, B0) => A): RequestF[A] =
     new One[A]{
       type B = B0
       def req = req0

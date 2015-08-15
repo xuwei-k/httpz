@@ -3,15 +3,15 @@ package apachehttp
 
 import java.io.Closeable
 import java.net.URI
+import java.util.zip.GZIPInputStream
 
-import org.apache.http.{Header, HttpStatus, HttpEntity, StatusLine}
-import org.apache.http.util.EntityUtils
+import org.apache.http.Header
+import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.client.methods._
 import org.apache.http.client.protocol.HttpClientContext
-import org.apache.http.impl.auth.BasicScheme
-import org.apache.http.auth.UsernamePasswordCredentials
-import org.apache.http.impl.client.HttpClients
 import org.apache.http.entity.ByteArrayEntity
+import org.apache.http.impl.auth.BasicScheme
+import org.apache.http.impl.client.HttpClients
 
 final case class HttpError(
   status: Int,
@@ -28,7 +28,7 @@ object ApacheInterpreter extends InterpretersTemplate {
   private def using[A <: Closeable, B](resource: A)(f: A => B): B = try {
     f(resource)
   } finally {
-    resource.close
+    resource.close()
   }
 
   private def setByteArrayEntity(req: HttpEntityEnclosingRequestBase, body: Option[Array[Byte]]) = {
@@ -71,16 +71,43 @@ object ApacheInterpreter extends InterpretersTemplate {
     c.execute(request)
   }
 
-  override protected def request2string(req: httpz.Request) = {
+  private[this] def convertHeaders(headers: Array[Header]): Map[String, List[String]] = {
+    val map = collection.mutable.Map.empty[String, List[String]]
+    @annotation.tailrec
+    def loop(i: Int): Unit = {
+      if(i < headers.length) {
+        val h = headers(i)
+        val k = h.getName
+        val newV: List[String] = h.getElements.map(_.getName)(collection.breakOut)
+        map.get(k) match {
+          case Some(v) =>
+            map += ((k, v ++ newV))
+          case None =>
+            map += ((k, newV))
+        }
+        loop(i + 1)
+      }
+    }
+    loop(0)
+    map.toMap
+  }
+
+  override protected def request2response(req: httpz.Request) = {
     using(executeRequest(req)){ res =>
       val code = res.getStatusLine().getStatusCode()
+      val headers = convertHeaders(res.getAllHeaders())
       val entity = res.getEntity()
-      val body = EntityUtils.toString(entity, "UTF-8")
-      if (code == HttpStatus.SC_OK) {
-        body
-      } else {
-        throw new HttpError(code, body)
+      val stm = (entity.getContent, entity.getContentEncoding) match {
+        case (s, null) => s
+        case (s, enc) if enc.getValue == "gzip" => new GZIPInputStream(s)
+        case (s, _) => s
       }
+      val body = try{
+        new ByteArray(Core.inputStream2bytes(stm))
+      }finally{
+        stm.close()
+      }
+      Response(body, code, headers)
     }
   }
 

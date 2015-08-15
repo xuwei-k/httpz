@@ -36,10 +36,10 @@ package object httpz{
   def actionEMonad[E]: Monad[({type λ[α] = ActionE[E, α]})#λ] =
     EitherT.eitherTMonad[Requests, E]
 
-  implicit val ActionMonad: Monad[Action] =
+  val ActionMonad: Monad[Action] =
     actionEMonad[Error]
 
-  implicit val ActionNelMonad: Monad[ActionNel] =
+  val ActionNelMonad: Monad[ActionNel] =
     actionEMonad[ErrorNel]
 
   def ActionZipAp[E: Semigroup]: Apply[({type λ[α] = ActionE[E, α]})#λ] =

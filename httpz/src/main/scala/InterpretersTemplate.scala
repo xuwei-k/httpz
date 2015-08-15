@@ -7,7 +7,7 @@ import RequestF._
 
 abstract class InterpretersTemplate {
 
-  protected[this] def request2string(req: Request): String
+  protected[this] def request2response(req: Request): Response[ByteArray]
 
   protected[this] def task[A](one: One[A], conf: Config): Task[A] =
     Task(runOne(one, conf))
@@ -15,7 +15,7 @@ abstract class InterpretersTemplate {
   private def runOne[A](o: One[A], conf: Config): A =
     try {
       val r = conf(o.req)
-      o.decode(r, o.parse(r, request2string(r)))
+      o.decode(r, o.parse(r, request2response(r)))
     } catch {
       case e: Throwable =>
         onHttpError(o, e)
@@ -90,14 +90,14 @@ abstract class InterpretersTemplate {
       val r = conf(o.req)
       val start = System.nanoTime
       try {
-        val str = request2string(r)
+        val res = request2response(r)
         val httpFinished = System.nanoTime
-        val parseResult = o.parse(r, str)
+        val parseResult = o.parse(r, res)
         val parseFinished = System.nanoTime
         val decodeResult = o.decode(r, parseResult)
         val decodeFinished = System.nanoTime - parseFinished
         val time = Time.Success(
-          r, str, httpFinished - start, parseFinished - httpFinished, decodeFinished
+          r, res, httpFinished - start, parseFinished - httpFinished, decodeFinished
         )
         (time :: Nil) -> decodeResult
       } catch {

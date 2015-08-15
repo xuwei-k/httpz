@@ -1,6 +1,6 @@
 package httpz
 
-import com.ning.http.client.{Request => NingRequest, _}
+import com.ning.http.client.{Request => NingRequest, Response => NingResponse, _}
 import scalaz.concurrent.{Future, Task, Strategy, Promise}
 import scala.collection.convert.decorateAsJava._
 import java.util.Collections.singletonList
@@ -39,16 +39,20 @@ package object async {
     builder.build
   }
 
-  private def execute(request: NingRequest): Promise[Throwable \/ String] = {
+  private def execute(request: NingRequest): Promise[Throwable \/ Response[ByteArray]] = {
     val client = new AsyncHttpClient
-    val promise = Promise.emptyPromise[Throwable \/ String](Strategy.DefaultStrategy)
+    val promise = Promise.emptyPromise[Throwable \/ Response[ByteArray]](Strategy.DefaultStrategy)
     val handler = new AsyncCompletionHandler[Unit] {
-      def onCompleted(response: Response) =
+      def onCompleted(res: NingResponse) =
         try{
+          import scala.collection.convert.decorateAsScala._
+          import scala.collection.convert.wrapAsScala.mapAsScalaMap
           promise.fulfill{
-            val body = response.getResponseBody
+            val body = new ByteArray(res.getResponseBodyAsBytes)
+            val status = res.getStatusCode
+            val headers = mapAsScalaMap(res.getHeaders).mapValues(_.asScala.toList)
             client.close()
-            \/-(body)
+            \/-(Response(body, status, headers.toMap))
           }
         }catch {
           case e: Throwable =>
@@ -60,7 +64,7 @@ package object async {
     promise
   }
 
-  private[async] def request2async(r: Request): Task[String] = {
+  private[async] def request2async(r: Request): Task[Response[ByteArray]] = {
     val req = httpz2ning(r)
     val promise = execute(req)
     Task(promise.get).flatMap{

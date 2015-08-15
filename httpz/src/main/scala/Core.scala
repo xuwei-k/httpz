@@ -1,5 +1,7 @@
 package httpz
 
+import java.io.{ByteArrayOutputStream, InputStream}
+
 import scalaz._, Free.FreeC
 import argonaut._
 
@@ -10,33 +12,76 @@ object Core extends Core[RequestF] {
    */
   implicit def instance[F[_]](implicit I: Inject[RequestF, F]) =
     new Core[F]
+
+  def inputStream2bytes(in: InputStream): Array[Byte] = {
+    val buf = new ByteArrayOutputStream()
+    val data = new Array[Byte](4096)
+    @annotation.tailrec
+    def loop(): Unit = {
+      in.read(data, 0, data.length) match {
+        case n if n > 0 =>
+          buf.write(data, 0, n)
+          loop()
+        case _ =>
+      }
+    }
+    loop()
+    buf.toByteArray
+  }
 }
 
 sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
+
+  private[this] implicit val f = Free.freeMonad[({type l[a] = Coyoneda[F, a]})#l]
 
   private[this] def lift[A, B](f: RequestF[A \/ B]) =
     EitherT[({type l[a] = FreeC[F, a]})#l, A, B](Free.liftFC(I.inj(f)))
 
   def json[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, A] =
-    lift(RequestF.one[Error \/ A, Error \/ Json](
+    jsonResponse[A](req).map(_.body)
+
+  def jsonResponse[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, Response[A]] =
+    lift(RequestF.one[Error \/ Response[A], Error \/ Response[Json]](
       req,
       \/.left,
-      (request, result) => Parse.parse(result).leftMap(Error.parse),
+      (request, response) => {
+        val str = response.bodyUTF8
+        Parse.parse(str) match {
+          case \/-(json) =>
+            \/-(response.copy(body = json))
+          case -\/(e) =>
+            -\/(Error.parse(response, e))
+        }
+      },
       (request, either) => either.flatMap{ json =>
-        A.decodeJson(json).result match {
-           case r @ \/-(_) => r
-           case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json))
+        A.decodeJson(json.body).result match {
+          case \/-(r) => \/-(json.copy(body = r))
+          case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json.body))
         }
       }
     ))
 
-  def string(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, String] =
-    lift(RequestF.one[Throwable \/ String, String](
+
+  def raw(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, Response[ByteArray]] =
+    lift(RequestF.one[Throwable \/ Response[ByteArray], Response[ByteArray]](
       req,
       \/.left,
-      (_, result) => result,
+      (_, response) => response,
       (_, result) => \/-(result)
     ))
 
+  def bytes(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, ByteArray] =
+    raw(req).map(_.body)
+
+  def string(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, String] =
+    stringResponse(req).map(_.body)
+
+  def stringResponse(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, Response[String]] =
+    lift(RequestF.one[Throwable \/ Response[String], Response[String]](
+      req,
+      \/.left,
+      (_, response) => response.asUTF8StringBody,
+      (_, result) => \/-(result)
+    ))
 }
 

@@ -9,9 +9,9 @@ sealed abstract class Time{
 
 object Time {
   final case class Success(
-    request: Request, result: String, http: Long, parse: Long, decode: Long
+    request: Request, result: Response[ByteArray], http: Long, parse: Long, decode: Long
   ) extends Time {
-    type A = String
+    type A = Response[ByteArray]
     override def toString = {
       ("request" -> request.toString) +: Seq(
         "http" -> http,

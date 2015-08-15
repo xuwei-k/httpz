@@ -1,12 +1,14 @@
 package httpz
 
 import argonaut.Json
+import scalaz.{\/-, -\/}
 
 abstract class Tests(
   interpreter: InterpretersTemplate,
-  methods: List[String] = Tests.defaultTestMethods
+  methods: List[String] = Tests.defaultTestMethods,
+  headerType: HeaderType = HeaderType.Multi
 ){
-  final def main(args: Array[String]): Unit = Tests.test(interpreter, methods)
+  final def main(args: Array[String]): Unit = Tests.test(interpreter, methods, headerType)
 }
 
 object Tests {
@@ -15,9 +17,9 @@ object Tests {
     "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "TRACE"//, "HEAD" // TODO
   )
 
-  private def test(interpreter: InterpretersTemplate, httpMethods: List[String]) =
+  private def test(interpreter: InterpretersTemplate, httpMethods: List[String], headerType: HeaderType) =
     useTestServer{ server =>
-      runTest(interpreter, server, httpMethods)
+      runTest(interpreter, server, httpMethods, headerType)
     }
 
   private def useTestServer[A](function: unfiltered.jetty.Http => A): A = {
@@ -34,10 +36,11 @@ object Tests {
   private def runTest(
     interpreter: InterpretersTemplate,
     server: unfiltered.jetty.Http,
-    methods: List[String]
+    methods: List[String],
+    headerType: HeaderType
   ): Unit = {
     val url = s"http://localhost:${server.port}/${TestServer.TestPath}"
-    val func: String => Action[Json] = { str =>
+    val funcJson: String => Action[Json] = { str =>
       Core.json(Request(
         method = "dummy",
         url = url,
@@ -47,6 +50,15 @@ object Tests {
         )
       ))
     }
+
+    val funcRaw = Core.raw(Request(
+      method = "dummy",
+      url = url,
+      params = Map(TestServer.TestParamKey -> "{}"),
+      headers = Map(
+        TestServer.TestHeaderKey -> TestServer.TestHeaderValue
+      )
+    )).map(_.headers)
 
     val testParams = Seq("{}")
 
@@ -60,15 +72,35 @@ object Tests {
       ))
     }
 
+
+    methods.foreach{ method =>
+      val expect = TestServer.testResponseHeaders
+      val action = funcRaw.mapRequest(Request.method(method))
+      val result = interpreter.sequential.empty.run(action)
+      println(result)
+      result match {
+        case \/-(a) =>
+          expect.foreach{ case (k, v) =>
+            headerType match {
+              case _: HeaderType.CommaSeparated.type =>
+                assert(a.get(k).map(_.head) == Some(v.mkString(", ")), List(k, a, expect).mkString("\n", "\n", ""))
+              case _: HeaderType.Multi.type =>
+                assert(a.get(k) == Some(v), List(k, a, expect).mkString("\n", "\n", ""))
+            }
+          }
+        case -\/(e) =>
+          throw e
+      }
+    }
+
     for{
       p <- testParams
       (expect, action) <- basicAuthReq :: methods.map{ method =>
-        TestServer.quote(method) -> func(p).mapRequest(Request.method(method))
+        TestServer.quote(method) -> funcJson(p).mapRequest(Request.method(method))
       }
     }{
       val result = interpreter.sequential.empty.run(action)
       println(result)
-      import scalaz.{\/-, -\/}
       result match {
         case \/-(a) =>
           assert(a.toString == expect, s"$a is not equal to $expect, $interpreter")

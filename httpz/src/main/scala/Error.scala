@@ -2,7 +2,7 @@ package httpz
 
 import argonaut._
 
-sealed abstract class Error(e: Option[Throwable] = None) extends RuntimeException(e.orNull) with Product with Serializable {
+sealed abstract class Error(value: Option[Throwable] = None) extends RuntimeException(value.orNull) with Product with Serializable {
   import Error._
 
   def httpOr[A](z: => A, f: Throwable => A): A =
@@ -11,9 +11,9 @@ sealed abstract class Error(e: Option[Throwable] = None) extends RuntimeExceptio
       case _ => z
     }
 
-  def parseOr[A](z: => A, f: String => A): A =
+  def parseOr[A](z: => A, f: (Response[ByteArray], String) => A): A =
     this match {
-      case Parse(e) => f(e)
+      case Parse(res, e) => f(res, e)
       case _ => z
     }
 
@@ -25,14 +25,14 @@ sealed abstract class Error(e: Option[Throwable] = None) extends RuntimeExceptio
 
   final def fold[A](
     http: Throwable => A,
-    parse: String => A,
+    parse: (Response[ByteArray], String) => A,
     decode: (Request, String, CursorHistory, Json) => A
   ): A =
     this match {
       case Http(e) =>
         http(e)
-      case Parse(e) =>
-        parse(e)
+      case Parse(res, e) =>
+        parse(res, e)
       case Decode(r, m, h, s) =>
         decode(r, m, h, s)
     }
@@ -43,7 +43,7 @@ object Error {
     err: Throwable
   )(override val toString: String = "HttpError(" + err + ")"
   ) extends Error(Some(err))
-  final case class Parse private[Error] (err: String) extends Error{
+  final case class Parse private[Error] (response: Response[ByteArray], err: String) extends Error{
     override def getMessage = err
   }
   final case class Decode private[Error] (
@@ -59,7 +59,7 @@ object Error {
 
   val http: Throwable => Error = e => Http(e)()
   val httpWithToString: (Throwable, String) => Error = (e, str) => Http(e)(str)
-  val parse: String => Error = Parse
+  val parse: (Response[ByteArray], String) => Error = Parse
   val decode: (Request, String, CursorHistory, Json) => Error = Decode
 }
 

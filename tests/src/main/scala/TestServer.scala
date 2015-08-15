@@ -4,6 +4,8 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.filter.Plan.Intent
 
+import scala.util.Random
+
 object TestServer extends unfiltered.filter.Plan {
 
   private[this] def json(string: String) =
@@ -27,6 +29,13 @@ object TestServer extends unfiltered.filter.Plan {
 
   private[this] object TestHeader extends StringHeader(TestHeaderKey)
 
+  val testResponseHeaders: Map[String, List[String]] = {
+    def str() = Random.alphanumeric.take(5).mkString
+    List.tabulate(3){ i =>
+      str() -> List.fill(i)(str())
+    }.tail.toMap
+  }
+
   private[this] val intentList: List[Intent] = (
     (HEAD -> Ok) :: List(
       GET -> "GET",
@@ -39,7 +48,10 @@ object TestServer extends unfiltered.filter.Plan {
     ).map{ case (k, v) => k -> json(v)}
   ).map{ case (method, res) =>
     { case method(Params(TestParam(d)) & TestHeader(h)) if h == TestHeaderValue =>
-      res
+      testResponseHeaders.foldLeft(res){
+        case (acc, (key, values)) =>
+          new ResponseHeader(key, values) ~> acc
+      }
     }: Intent
   }
 
