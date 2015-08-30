@@ -13,36 +13,36 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.19"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.3.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.19"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.3.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.19"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.3.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.2.19"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.3.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.2.19"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.3.0"
 ```
 
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.2.19/httpz-all_2.11-0.2.19-javadoc.jar/!/index.html)
-- [sxr](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.2.19/httpz-all_2.11-0.2.19-sxr.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.3.0/httpz-all_2.11-0.3.0-javadoc.jar/!/index.html)
+- [sxr](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.11/0.3.0/httpz-all_2.11-0.3.0-sxr.jar/!/index.html)
 
 
 ### snapshot version
