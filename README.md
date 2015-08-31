@@ -4,11 +4,6 @@
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
 
-### for scalaz 7.0.x
-- <https://github.com/xuwei-k/httpz/tree/scalaz70>
-
-
-
 ### latest stable version
 
 ```scala
@@ -87,3 +82,7 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.3.1-SNAPSHOT"
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.1-SNAPSHOT/httpz-all_2.11-0.3.1-SNAPSHOT-javadoc.jar/!/index.html)
 - [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.1-SNAPSHOT/httpz-all_2.11-0.3.1-SNAPSHOT-sxr.jar/!/index.html)
+
+
+### for scalaz 7.0.x
+- <https://github.com/xuwei-k/httpz/tree/scalaz70>
