@@ -30,7 +30,7 @@ object build extends Build {
     scalapropsWithScalazlaws
   ).settings(
     name := httpzName,
-    scalapropsVersion := "0.1.15",
+    scalapropsVersion := "0.1.16",
     sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz",
     buildInfoObject := "BuildInfoHttpz",
