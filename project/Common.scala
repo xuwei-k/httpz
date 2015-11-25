@@ -23,6 +23,7 @@ object Common {
   private[this] val Scala211 = "2.11.7"
 
   val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
+    fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
