@@ -2,6 +2,6 @@ package httpz
 
 object Test extends httpz.Tests(
   interpreter = scalajhttp.ScalajInterpreter,
-  headerType = HeaderType.CommaSeparated
+  headerType = HeaderType.Multi
 )
 
