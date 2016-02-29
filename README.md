@@ -1,4 +1,4 @@
-# httpz [![Build Status](https://secure.travis-ci.org/xuwei-k/httpz.png)](http://travis-ci.org/xuwei-k/httpz) [![Reference Status](https://www.versioneye.com/java/com.github.xuwei-k:httpz_2.11/reference_badge.svg?style=flat)](https://www.versioneye.com/java/com.github.xuwei-k:httpz_2.11/references)
+# httpz [![Build Status](https://travis-ci.org/xuwei-k/httpz.svg?branch=master)](https://travis-ci.org/xuwei-k/httpz) [![Reference Status](https://www.versioneye.com/java/com.github.xuwei-k:httpz_2.11/reference_badge.svg?style=flat)](https://www.versioneye.com/java/com.github.xuwei-k:httpz_2.11/references)
 
 - [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
