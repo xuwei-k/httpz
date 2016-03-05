@@ -10,6 +10,6 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "0.4.0")
 
 addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.3.0")
 
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.2")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.6.0")
 
 fullResolvers ~= {_.filterNot(_.name == "jcenter")}

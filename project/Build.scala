@@ -1,5 +1,6 @@
 import sbt._, Keys._
-import sbtbuildinfo.Plugin._
+import sbtbuildinfo.BuildInfoPlugin
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import scalaprops.ScalapropsPlugin.autoImport._
 
 object build extends Build {
@@ -24,14 +25,16 @@ object build extends Build {
     Nil
   )
 
-  lazy val httpz = Project("httpz", file("httpz")).settings(
-    Common.baseSettings : _*
-  ).settings(
-    scalapropsWithScalazlaws
-  ).settings(
+  def module(id: String) =
+    Project(id, file(id)).settings(
+      Common.baseSettings,
+      BuildInfoPlugin.projectSettings
+    )
+
+  lazy val httpz = module("httpz").settings(
+    scalapropsWithScalazlaws,
     name := httpzName,
     scalapropsVersion := "0.1.16",
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz",
     buildInfoObject := "BuildInfoHttpz",
     libraryDependencies ++= Seq(
@@ -40,12 +43,9 @@ object build extends Build {
     )
   )
 
-  lazy val async = Project("async", file("async")).settings(
-    Common.baseSettings : _*
-  ).settings(
+  lazy val async = module("async").settings(
     name := asyncName,
     testSetting,
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz.async",
     buildInfoObject := "BuildInfoHttpzAsync",
     libraryDependencies ++= Seq(
@@ -53,12 +53,9 @@ object build extends Build {
     )
   ).dependsOn(httpz, tests % "test")
 
-  lazy val scalaj = Project("scalaj", file("scalaj")).settings(
-    Common.baseSettings : _*
-  ).settings(
+  lazy val scalaj = module("scalaj").settings(
     name := scalajName,
     testSetting,
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz.scalajhttp",
     buildInfoObject := "BuildInfoHttpzScalaj",
     libraryDependencies ++= Seq(
@@ -66,12 +63,9 @@ object build extends Build {
     )
   ).dependsOn(httpz, tests % "test")
 
-  lazy val dispatch = Project("dispatch", file("dispatch")).settings(
-    Common.baseSettings : _*
-  ).settings(
+  lazy val dispatch = module("dispatch").settings(
     name := dispatchName,
     testSetting,
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz.dispatchclassic",
     buildInfoObject := "BuildInfoHttpzDispatch",
     libraryDependencies ++= Seq(
@@ -79,12 +73,9 @@ object build extends Build {
     )
   ).dependsOn(httpz, tests % "test")
 
-  lazy val apache = Project("apache", file("apache")).settings(
-    Common.baseSettings : _*
-  ).settings(
+  lazy val apache = module("apache").settings(
     name := apacheName,
     testSetting,
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz.apachehttp",
     buildInfoObject := "BuildInfoHttpzApache",
     libraryDependencies ++= Seq(
@@ -92,11 +83,8 @@ object build extends Build {
     )
   ).dependsOn(httpz, tests % "test")
 
-  lazy val nativeClient = Project("native-client", file("native-client")).settings(
-    Common.baseSettings : _*
-  ).settings(
+  lazy val nativeClient = module("native-client").settings(
     name := nativeClientName,
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoPackage := "httpz.native",
     buildInfoObject := "BuildInfoHttpzNative",
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
@@ -109,8 +97,7 @@ object build extends Build {
   )
 
   lazy val native = Project("native", file("native")).settings(
-    Common.baseSettings : _*
-  ).settings(
+    Common.baseSettings,
     name := nativeName,
     testSetting
   ).dependsOn(httpz, nativeClient, tests % "test")

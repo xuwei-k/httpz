@@ -4,7 +4,8 @@ import xerial.sbt.Sonatype._
 import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
-import sbtbuildinfo.Plugin._
+import sbtbuildinfo.BuildInfoPlugin
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 object Common {
 
@@ -22,7 +23,7 @@ object Common {
 
   private[this] val Scala211 = "2.11.7"
 
-  val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
+  val baseSettings = sonatypeSettings ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
