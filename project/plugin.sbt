@@ -1,6 +1,6 @@
 scalacOptions ++= Seq("-deprecation", "-Xlint", "-unchecked", "-language:_")
 
-addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.1.0")
+addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.1.1")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
 
