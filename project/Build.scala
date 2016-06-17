@@ -59,7 +59,7 @@ object build extends Build {
     buildInfoPackage := "httpz.scalajhttp",
     buildInfoObject := "BuildInfoHttpzScalaj",
     libraryDependencies ++= Seq(
-      "org.scalaj" %% "scalaj-http" % "2.2.1"
+      "org.scalaj" %% "scalaj-http" % "2.3.0"
     )
   ).dependsOn(httpz, tests % "test")
 
