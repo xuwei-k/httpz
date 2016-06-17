@@ -1,7 +1,6 @@
 package httpz.native
 
 import java.io.ByteArrayInputStream
-import java.net.{InetSocketAddress, Proxy}
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before

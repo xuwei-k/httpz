@@ -1,9 +1,8 @@
 package httpz
 package native
 
-import java.net.{HttpURLConnection, InetSocketAddress, URL, URLEncoder, URLDecoder}
-import java.io.{DataOutputStream, InputStream, BufferedReader, InputStreamReader, ByteArrayInputStream,
-  ByteArrayOutputStream}
+import java.net.{HttpURLConnection, URL, URLEncoder, URLDecoder}
+import java.io.{InputStream, InputStreamReader, ByteArrayInputStream, ByteArrayOutputStream}
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
