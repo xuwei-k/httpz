@@ -34,7 +34,7 @@ object build extends Build {
   lazy val httpz = module("httpz").settings(
     scalapropsWithScalazlaws,
     name := httpzName,
-    scalapropsVersion := "0.1.16",
+    scalapropsVersion := "0.1.17",
     buildInfoPackage := "httpz",
     buildInfoObject := "BuildInfoHttpz",
     libraryDependencies ++= Seq(
