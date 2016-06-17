@@ -49,7 +49,7 @@ object build extends Build {
     buildInfoPackage := "httpz.async",
     buildInfoObject := "BuildInfoHttpzAsync",
     libraryDependencies ++= Seq(
-      "com.ning" % "async-http-client" % "1.9.33"
+      "com.ning" % "async-http-client" % "1.9.38"
     )
   ).dependsOn(httpz, tests % "test")
 
