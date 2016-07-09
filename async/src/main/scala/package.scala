@@ -13,13 +13,13 @@ package object async {
     new AsyncActionEOps(a)
 
   private def auth(user: String, password: String) = {
-     import com.ning.http.client.Realm.{RealmBuilder,AuthScheme}
-     new RealmBuilder()
-       .setPrincipal(user)
-       .setPassword(password)
-       .setUsePreemptiveAuth(true)
-       .setScheme(AuthScheme.BASIC)
-       .build()
+    import com.ning.http.client.Realm.{RealmBuilder, AuthScheme}
+    new RealmBuilder()
+      .setPrincipal(user)
+      .setPassword(password)
+      .setUsePreemptiveAuth(true)
+      .setScheme(AuthScheme.BASIC)
+      .build()
   }
 
   private def httpz2ning(r: Request): NingRequest = {
