@@ -84,5 +84,5 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.4.1-SNAPSHOT"
 - [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.4.1-SNAPSHOT/httpz-all_2.11-0.4.1-SNAPSHOT-sxr.jar/!/index.html)
 
 
-### for scalaz 7.0.x
-- <https://github.com/xuwei-k/httpz/tree/scalaz70>
+### for scalaz 7.1.x
+- <https://github.com/xuwei-k/httpz/tree/scalaz71>
