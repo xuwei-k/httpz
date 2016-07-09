@@ -44,7 +44,7 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.3.2"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.3.2-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.3.3-SNAPSHOT"
 ```
 
 or
@@ -52,7 +52,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.3.2-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.3.3-SNAPSHOT"
 ```
 
 or
@@ -60,7 +60,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.3.2-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.3.3-SNAPSHOT"
 ```
 
 or
@@ -68,7 +68,7 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.3.2-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.3.3-SNAPSHOT"
 ```
 
 or
@@ -76,12 +76,12 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.3.2-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.3.3-SNAPSHOT"
 ```
 
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.2-SNAPSHOT/httpz-all_2.11-0.3.2-SNAPSHOT-javadoc.jar/!/index.html)
-- [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.2-SNAPSHOT/httpz-all_2.11-0.3.2-SNAPSHOT-sxr.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.3-SNAPSHOT/httpz-all_2.11-0.3.3-SNAPSHOT-javadoc.jar/!/index.html)
+- [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/httpz-all_2.11/0.3.3-SNAPSHOT/httpz-all_2.11-0.3.3-SNAPSHOT-sxr.jar/!/index.html)
 
 
 ### for scalaz 7.0.x
