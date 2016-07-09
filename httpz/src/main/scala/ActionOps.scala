@@ -4,19 +4,19 @@ import scalaz.{One => _, Two => _, _}
 
 final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
-  def nel: ActionE[NonEmptyList[E], A] = self.leftMap(NonEmptyList.nel(_, Nil))
+  def nel: ActionE[NonEmptyList[E], A] = self.leftMap(NonEmptyList.nel(_, IList.empty))
 
   def mapRequest(f: Config): ActionE[E, A] = Action[E, A](
-    Z.mapSuspensionFreeC(self.run, new (RequestF ~> RequestF){
+    self.run.mapSuspension(new (RequestF ~> RequestF){
       def apply[B](a: RequestF[B]) = a.mapRequest(f)
     })
   )
 
   def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[E \/ A] =
-    Free.runFC(self.run)(f)
+    self.run.foldMap(f)
 
   def zipWithError[B, C, E1, E2](that: ActionE[E1, B])(f: (E \/ A, E1 \/ B) => E2 \/ C): ActionE[E2, C] =
-    Action(Free.liftFC(RequestF.two(self, that)(f)))
+    Action(Free.liftF(RequestF.two(self, that)(f)))
 
   def zip[B](that: ActionE[E, B])(implicit E: Semigroup[E]): ActionE[E, (A, B)] =
     zipWith(that)(Tuple2.apply)

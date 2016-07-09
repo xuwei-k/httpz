@@ -2,7 +2,7 @@ package httpz
 
 import java.io.{ByteArrayOutputStream, InputStream}
 
-import scalaz._, Free.FreeC
+import scalaz._
 import argonaut._
 
 object Core extends Core[RequestF] {
@@ -32,15 +32,13 @@ object Core extends Core[RequestF] {
 
 sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
 
-  private[this] implicit val f = Free.freeMonad[({type l[a] = Coyoneda[F, a]})#l]
-
   private[this] def lift[A, B](f: RequestF[A \/ B]) =
-    EitherT[({type l[a] = FreeC[F, a]})#l, A, B](Free.liftFC(I.inj(f)))
+    EitherT[({type l[a] = Free[F, a]})#l, A, B](Free.liftF(I.inj(f)))
 
-  def json[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, A] =
+  def json[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = Free[F, a]})#l, Error, A] =
     jsonResponse[A](req).map(_.body)
 
-  def jsonResponse[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = FreeC[F, a]})#l, Error, Response[A]] =
+  def jsonResponse[A](req: Request)(implicit A: DecodeJson[A]): EitherT[({type l[a] = Free[F, a]})#l, Error, Response[A]] =
     lift(RequestF.one[Error \/ Response[A], Error \/ Response[Json]](
       req,
       \/.left,
@@ -62,7 +60,7 @@ sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
     ))
 
 
-  def raw(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, Response[ByteArray]] =
+  def raw(req: Request): EitherT[({type l[a] = Free[F, a]})#l, Throwable, Response[ByteArray]] =
     lift(RequestF.one[Throwable \/ Response[ByteArray], Response[ByteArray]](
       req,
       \/.left,
@@ -70,13 +68,13 @@ sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
       (_, result) => \/-(result)
     ))
 
-  def bytes(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, ByteArray] =
+  def bytes(req: Request): EitherT[({type l[a] = Free[F, a]})#l, Throwable, ByteArray] =
     raw(req).map(_.body)
 
-  def string(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, String] =
+  def string(req: Request): EitherT[({type l[a] = Free[F, a]})#l, Throwable, String] =
     stringResponse(req).map(_.body)
 
-  def stringResponse(req: Request): EitherT[({type l[a] = FreeC[F, a]})#l, Throwable, Response[String]] =
+  def stringResponse(req: Request): EitherT[({type l[a] = Free[F, a]})#l, Throwable, Response[String]] =
     lift(RequestF.one[Throwable \/ Response[String], Response[String]](
       req,
       \/.left,

@@ -6,7 +6,7 @@ import scalaz.concurrent.Task
 object AsyncInterpreter extends InterpretersTemplate {
 
   override protected def request2response(req: httpz.Request) = {
-    request2async(req).run
+    request2async(req).unsafePerformSync
   }
 
   override protected def task[A](one: httpz.RequestF.One[A], conf: Config): Task[A] = {

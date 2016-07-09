@@ -11,6 +11,6 @@ abstract class Interpreter[F[_]: Monad] {
   protected[this] def go[A](a: RequestF[A]): F[A]
 
   final def run[E, A](a: ActionE[E, A]): F[E \/ A] =
-    Free.runFC(a.run)(interpreter)
+    a.run.foldMap(interpreter)
 }
 

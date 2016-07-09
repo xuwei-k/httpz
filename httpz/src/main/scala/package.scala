@@ -5,7 +5,7 @@ package object httpz{
 
   type InterpreterF[F[_]] = RequestF ~> F
 
-  type Requests[A] = Free.FreeC[RequestF, A]
+  type Requests[A] = Free[RequestF, A]
 
   type ErrorNel = NonEmptyList[Error]
 
@@ -30,8 +30,8 @@ package object httpz{
 
   val emptyConfig: Config = Endo.idEndo
 
-  implicit val RequestsMonad: Monad[Requests] =
-    Z.freeCMonad[RequestF]
+  val RequestsMonad: Monad[Requests] =
+    Free.freeMonad[RequestF]
 
   def actionEMonad[E]: Monad[({type λ[α] = ActionE[E, α]})#λ] =
     EitherT.eitherTMonad[Requests, E]
