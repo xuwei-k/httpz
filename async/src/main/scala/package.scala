@@ -2,7 +2,7 @@ package httpz
 
 import com.ning.http.client.{Request => NingRequest, Response => NingResponse, _}
 import scalaz.concurrent.Task
-import scala.collection.convert.decorateAsJava._
+import scala.collection.JavaConverters._
 import java.util.Collections.singletonList
 import java.util.{Collection => JCollection}
 import scalaz._
@@ -49,7 +49,6 @@ package object async {
       val handler = new AsyncCompletionHandler[Unit] {
         def onCompleted(res: NingResponse) =
           try{
-            import scala.collection.JavaConverters._
             val body = new ByteArray(res.getResponseBodyAsBytes)
             val status = res.getStatusCode
             val headers = mapAsScalaMapConverter(res.getHeaders).asScala.mapValues(_.asScala.toList).toMap
