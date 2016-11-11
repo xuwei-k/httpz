@@ -62,8 +62,7 @@ lazy val native = Project("native", file("native")).settings(
 ).dependsOn(httpz, nativeClient, tests % "test")
 
 lazy val tests = Project("tests", file("tests")).settings(
-  Common.baseSettings : _*
-).settings(
+  Common.baseSettings,
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, v)) if v >= 12 =>
