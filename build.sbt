@@ -98,8 +98,8 @@ lazy val root = {
     name := "httpz-all",
     artifacts := Nil,
     packagedArtifacts := Map.empty,
-    artifacts <++= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
-    packagedArtifacts <++= Classpaths.packaged(Seq(packageDoc in Compile)),
+    artifacts ++= Classpaths.artifactDefs(Seq(packageDoc in Compile)).value,
+    packagedArtifacts ++= Classpaths.packaged(Seq(packageDoc in Compile)).value,
     Sxr.settings1,
     Defaults.packageTaskSettings(
       packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
