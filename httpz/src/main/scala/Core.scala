@@ -45,16 +45,16 @@ sealed class Core[F[_]](implicit I: Inject[RequestF, F]) {
       (request, response) => {
         val str = response.bodyUTF8
         Parse.parse(str) match {
-          case \/-(json) =>
+          case Right(json) =>
             \/-(response.copy(body = json))
-          case -\/(e) =>
+          case Left(e) =>
             -\/(Error.parse(response, e))
         }
       },
       (request, either) => either.flatMap{ json =>
         A.decodeJson(json.body).result match {
-          case \/-(r) => \/-(json.copy(body = r))
-          case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json.body))
+          case Right(r) => \/-(json.copy(body = r))
+          case Left((msg, history)) => -\/(Error.decode(request, msg, history, json.body))
         }
       }
     ))
