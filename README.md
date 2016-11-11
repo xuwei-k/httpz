@@ -13,12 +13,6 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.4.0"
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.4.0"
-```
-
-or
-
-```scala
 libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.4.0"
 ```
 
@@ -45,14 +39,6 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.4.0"
 resolvers += Opts.resolver.sonatypeSnapshots
 
 libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.4.1-SNAPSHOT"
-```
-
-or
-
-```scala
-resolvers += Opts.resolver.sonatypeSnapshots
-
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.4.1-SNAPSHOT"
 ```
 
 or

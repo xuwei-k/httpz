@@ -32,16 +32,6 @@ lazy val scalaj = module("scalaj").settings(
   )
 ).dependsOn(httpz, tests % "test")
 
-lazy val dispatch = module("dispatch").settings(
-  name := dispatchName,
-  testSetting,
-  buildInfoPackage := "httpz.dispatchclassic",
-  buildInfoObject := "BuildInfoHttpzDispatch",
-  libraryDependencies ++= Seq(
-    "net.databinder" %% "dispatch-http" % "0.8.10"
-  )
-).dependsOn(httpz, tests % "test")
-
 lazy val apache = module("apache").settings(
   name := apacheName,
   testSetting,
@@ -91,7 +81,7 @@ lazy val root = {
     Sxr.commonSettings(Compile, "unidoc.sxr") ++ Seq(
       Sxr.packageSxr in Compile <<= (Sxr.packageSxr in Compile).dependsOn(UnidocKeys.unidoc in Compile)
     ) ++ (
-      httpz :: async :: scalaj :: dispatch :: apache :: nativeClient :: native :: Nil
+      httpz :: async :: scalaj :: apache :: nativeClient :: native :: Nil
     ).map(libraryDependencies <++= libraryDependencies in _)
   }
 
@@ -108,5 +98,5 @@ lazy val root = {
     ) ++ Defaults.packageTaskSettings(
       packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
     ) ++ sxrSettings : _*
-  ).aggregate(httpz, scalaj, async, dispatch, apache, native, nativeClient, tests)
+  ).aggregate(httpz, scalaj, async, apache, native, nativeClient, tests)
 }

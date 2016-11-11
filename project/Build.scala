@@ -9,7 +9,6 @@ object build {
   final val httpzName = "httpz"
   final val asyncName = "httpz-async"
   final val scalajName = "httpz-scalaj"
-  final val dispatchName = "httpz-dispatch"
   final val apacheName = "httpz-apache"
   final val nativeClientName = "httpz-native-client"
   final val nativeName = "httpz-native"
@@ -17,7 +16,6 @@ object build {
     httpzName ::
     asyncName ::
     scalajName ::
-    dispatchName ::
     apacheName ::
     nativeClientName ::
     nativeName ::
