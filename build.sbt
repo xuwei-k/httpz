@@ -18,7 +18,7 @@ lazy val async = module("async").settings(
   buildInfoPackage := "httpz.async",
   buildInfoObject := "BuildInfoHttpzAsync",
   libraryDependencies ++= Seq(
-    "com.ning" % "async-http-client" % "1.9.39"
+    "com.ning" % "async-http-client" % "1.9.40"
   )
 ).dependsOn(httpz, tests % "test")
 
