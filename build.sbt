@@ -64,9 +64,26 @@ lazy val native = Project("native", file("native")).settings(
 lazy val tests = Project("tests", file("tests")).settings(
   Common.baseSettings : _*
 ).settings(
-  libraryDependencies ++= ("filter" :: "jetty" :: Nil).map(m =>
-    "net.databinder" %% s"unfiltered-$m" % "0.8.2"
-  ),
+  libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v >= 12 =>
+        Nil
+      case _ =>
+        // https://github.com/unfiltered/unfiltered/issues/319
+        ("filter" :: "jetty" :: Nil).map(m =>
+          "net.databinder" %% s"unfiltered-$m" % "0.8.2"
+        )
+    }
+  },
+  (sources in Compile) := {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v >= 12 =>
+        // https://github.com/unfiltered/unfiltered/issues/319
+        Nil
+      case _ =>
+        (sources in Compile).value
+    }
+  },
   publishArtifact := false,
   publish := {},
   publishLocal := {}
@@ -75,28 +92,18 @@ lazy val tests = Project("tests", file("tests")).settings(
 lazy val root = {
   import sbtunidoc.Plugin._
 
-  val sxrSettings = if(Sxr.disableSxr){
-    Nil
-  }else{
-    Sxr.commonSettings(Compile, "unidoc.sxr") ++ Seq(
-      Sxr.packageSxr in Compile <<= (Sxr.packageSxr in Compile).dependsOn(UnidocKeys.unidoc in Compile)
-    ) ++ (
-      httpz :: async :: scalaj :: apache :: nativeClient :: native :: Nil
-    ).map(libraryDependencies <++= libraryDependencies in _)
-  }
-
   Project("root", file(".")).settings(
-    Common.baseSettings ++ unidocSettings ++ Seq(
-      name := "httpz-all",
-      artifacts := Nil,
-      packagedArtifacts := Map.empty,
-      artifacts <++= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
-      packagedArtifacts <++= Classpaths.packaged(Seq(packageDoc in Compile)),
-      scalacOptions in UnidocKeys.unidoc += {
-        "-P:sxr:base-directory:" + (sources in UnidocKeys.unidoc in ScalaUnidoc).value.mkString(":")
-      }
-    ) ++ Defaults.packageTaskSettings(
+    Common.baseSettings,
+    unidocSettings,
+    name := "httpz-all",
+    artifacts := Nil,
+    packagedArtifacts := Map.empty,
+    artifacts <++= Classpaths.artifactDefs(Seq(packageDoc in Compile)),
+    packagedArtifacts <++= Classpaths.packaged(Seq(packageDoc in Compile)),
+    Sxr.settings1,
+    Defaults.packageTaskSettings(
       packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
-    ) ++ sxrSettings : _*
+    ),
+    Sxr.settings2
   ).aggregate(httpz, scalaj, async, apache, native, nativeClient, tests)
 }

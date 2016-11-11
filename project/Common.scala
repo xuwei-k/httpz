@@ -25,6 +25,15 @@ object Common {
 
   val baseSettings = sonatypeSettings ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
+    (sources in Test) := {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, v)) if v >= 12 =>
+          // https://github.com/unfiltered/unfiltered/issues/319
+          (sources in Test).value.filterNot(_.getName == "Test.scala")
+        case _ =>
+          (sources in Test).value
+      }
+    },
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
@@ -37,10 +46,6 @@ object Common {
     ),
     commands += Command.command("updateReadme")(UpdateReadme.updateReadmeTask),
     releaseProcess := Seq[ReleaseStep](
-      ReleaseStep{ state =>
-        assert(Sxr.disableSxr == false)
-        state
-      },
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
@@ -85,7 +90,7 @@ object Common {
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
     scalaVersion := Scala211,
-    crossScalaVersions := Scala211 :: "2.10.6" :: Nil,
+    crossScalaVersions := "2.12.0" :: Scala211 :: "2.10.6" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -121,7 +126,7 @@ object Common {
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
-  ) ++ Sxr.subProjectSxr(Compile, "classes.sxr") ++ Seq(Compile, Test).flatMap(c =>
+  ) ++ Seq(Compile, Test).flatMap(c =>
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
