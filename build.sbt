@@ -64,24 +64,9 @@ lazy val native = Project("native", file("native")).settings(
 lazy val tests = Project("tests", file("tests")).settings(
   Common.baseSettings,
   libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, v)) if v >= 12 =>
-        Nil
-      case _ =>
-        // https://github.com/unfiltered/unfiltered/issues/319
-        ("filter" :: "jetty" :: Nil).map(m =>
-          "net.databinder" %% s"unfiltered-$m" % "0.8.2"
-        )
-    }
-  },
-  (sources in Compile) := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, v)) if v >= 12 =>
-        // https://github.com/unfiltered/unfiltered/issues/319
-        Nil
-      case _ =>
-        (sources in Compile).value
-    }
+    ("filter" :: "jetty" :: Nil).map(m =>
+      "ws.unfiltered" %% s"unfiltered-$m" % "0.9.0-beta2"
+    )
   },
   publishArtifact := false,
   publish := {},

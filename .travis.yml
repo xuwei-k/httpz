@@ -18,7 +18,7 @@ script:
   - git config core.whitespace tab-in-indent,trailing-space,space-before-tab,cr-at-eol
   - git show --oneline --check
   - if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then export PUBLISH_SONATYPE=true; fi
-  - sbt ++${TRAVIS_SCALA_VERSION} test $(if [[ "${TRAVIS_SCALA_VERSION}" == "2.12.0" ]]; then echo "" ; else echo "runTests" ; fi) $(if [[ "${PUBLISH_SONATYPE}" == "true" ]]; then echo "publish" ; fi)
+  - sbt ++${TRAVIS_SCALA_VERSION} test runTests $(if [[ "${PUBLISH_SONATYPE}" == "true" ]]; then echo "publish" ; fi)
   - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
   - find $HOME/.ivy2/cache -name "*SNAPSHOT*" | xargs rm -rf
   - if [[ ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) ]]; then rm -rf $HOME/.ivy2/cache ; fi
@@ -30,5 +30,5 @@ env:
 
 matrix:
   include:
-  - scala: 2.12.0
+  - scala: 2.12.1
     jdk: oraclejdk8

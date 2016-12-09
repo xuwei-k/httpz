@@ -22,24 +22,24 @@ object Tests {
       runTest(interpreter, server, httpMethods, headerType)
     }
 
-  private def useTestServer[A](function: unfiltered.jetty.Http => A): A = {
-    val server = unfiltered.jetty.Http.anylocal
-    server.filter(TestServer).start
+  private def useTestServer[A](function: unfiltered.jetty.Server => A): Unit = {
+    val server = unfiltered.jetty.Server.anylocal.plan(TestServer)
+    server.start()
     try{
       function(server)
     } finally {
-      server.stop
-      server.destroy
+      server.stop()
     }
   }
 
   private def runTest(
     interpreter: InterpretersTemplate,
-    server: unfiltered.jetty.Http,
+    server: unfiltered.jetty.Server,
     methods: List[String],
     headerType: HeaderType
   ): Unit = {
-    val url = s"http://localhost:${server.port}/${TestServer.TestPath}"
+    val port = server.ports.headOption.getOrElse(sys.error("empty port binding!?"))
+    val url = s"http://localhost:${port}/${TestServer.TestPath}"
     val funcJson: String => Action[Json] = { str =>
       Core.json(Request(
         method = "dummy",
@@ -66,7 +66,7 @@ object Tests {
       import TestServer._
       val method = "GET"
       quote(TestAuthRes) -> Core.json(Request(
-        url = s"http://localhost:${server.port}/${TestServer.TestAuthPath}",
+        url = s"http://localhost:${port}/${TestServer.TestAuthPath}",
         method = method,
         basicAuth = Some((TestAuthUser, TestAuthPass))
       ))
