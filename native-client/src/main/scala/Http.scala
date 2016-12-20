@@ -28,8 +28,8 @@ object HttpOptions {
 
       val trustAllCerts = Array[TrustManager](new X509TrustManager() {
         def getAcceptedIssuers: Array[X509Certificate] = null
-        def checkClientTrusted(certs: Array[X509Certificate], authType: String){}
-        def checkServerTrusted(certs: Array[X509Certificate], authType: String){}
+        def checkClientTrusted(certs: Array[X509Certificate], authType: String) = {}
+        def checkServerTrusted(certs: Array[X509Certificate], authType: String) = {}
       })
 
       val sc = SSLContext.getInstance("SSL")
@@ -140,7 +140,7 @@ object Http {
       }.groupBy(_._1).mapValues(_.map(_._2).toList)
     }
 
-    private def closeStreams(conn:HttpURLConnection) {
+    private def closeStreams(conn:HttpURLConnection): Unit = {
       try {
         conn.getInputStream().close
       } catch {
@@ -308,7 +308,7 @@ object Http {
 
       val out = conn.getOutputStream()
 
-      def writeBytes(s: String) {
+      def writeBytes(s: String): Unit = {
         // this is only used for the structural pieces, not user input, so should be plain old ascii
         out.write(s.getBytes(Http.utf8))
       }

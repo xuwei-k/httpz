@@ -118,7 +118,7 @@ class HttpTest {
   }
 
   @Test
-  def allModificationsAreAdditive() {
+  def allModificationsAreAdditive(): Unit = {
     val params = List("a" -> "b")
     val headers = List("foo" -> "bar")
     val options = List(HttpOptions.readTimeout(1234))
