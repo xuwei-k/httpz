@@ -3,7 +3,7 @@ import build._
 lazy val httpz = module("httpz").settings(
   scalapropsWithScalazlaws,
   name := httpzName,
-  scalapropsVersion := "0.3.6",
+  scalapropsVersion := "0.4.0",
   buildInfoPackage := "httpz",
   buildInfoObject := "BuildInfoHttpz",
   libraryDependencies ++= Seq(
@@ -38,7 +38,7 @@ lazy val apache = module("apache").settings(
   buildInfoPackage := "httpz.apachehttp",
   buildInfoObject := "BuildInfoHttpzApache",
   libraryDependencies ++= Seq(
-    "org.apache.httpcomponents" % "httpclient" % "4.5.2"
+    "org.apache.httpcomponents" % "httpclient" % "4.5.3"
   )
 ).dependsOn(httpz, tests % "test")
 

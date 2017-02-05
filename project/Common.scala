@@ -1,6 +1,5 @@
 import sbt._, Keys._
 import sbtrelease._
-import xerial.sbt.Sonatype._
 import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
@@ -13,7 +12,7 @@ object Common {
     sys.process.Process("git rev-parse HEAD").lines_!.head
   ).toOption
 
-  def ScalazVersion = "7.2.7"
+  def ScalazVersion = "7.2.8"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused" ::
@@ -23,7 +22,7 @@ object Common {
 
   private[this] val Scala211 = "2.11.8"
 
-  val baseSettings = sonatypeSettings ++ Seq(
+  val baseSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
@@ -54,10 +53,7 @@ object Common {
       ),
       setNextVersion,
       commitNextVersion,
-      ReleaseStep{ state =>
-        val extracted = Project extract state
-        extracted.runTask(SonatypeKeys.sonatypeReleaseAll in extracted.get(thisProjectRef), state)._1
-      },
+      releaseStepCommand("sonatypeReleaseAll"),
       UpdateReadme.updateReadmeProcess,
       pushChanges
     ),
