@@ -12,7 +12,7 @@ object Common {
     sys.process.Process("git rev-parse HEAD").lines_!.head
   ).toOption
 
-  def ScalazVersion = "7.2.9"
+  def ScalazVersion = "7.2.10"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused" ::
@@ -20,7 +20,7 @@ object Common {
     Nil
   )
 
-  private[this] val Scala211 = "2.11.8"
+  private[this] val Scala211 = "2.11.10"
 
   val baseSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
