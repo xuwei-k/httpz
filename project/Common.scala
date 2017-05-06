@@ -20,7 +20,7 @@ object Common {
     Nil
   )
 
-  private[this] val Scala211 = "2.11.10"
+  private[this] val Scala211 = "2.11.11"
 
   val baseSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
