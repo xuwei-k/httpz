@@ -33,3 +33,8 @@ matrix:
   include:
   - scala: 2.12.2
     jdk: oraclejdk8
+
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
