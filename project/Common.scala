@@ -12,7 +12,7 @@ object Common {
     sys.process.Process("git rev-parse HEAD").lines_!.head
   ).toOption
 
-  def ScalazVersion = "7.2.15"
+  def ScalazVersion = "7.2.20"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused" ::
