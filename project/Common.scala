@@ -20,7 +20,7 @@ object Common {
     Nil
   )
 
-  private[this] val Scala211 = "2.11.11"
+  private[this] val Scala211 = "2.11.12"
 
   val baseSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
@@ -78,7 +78,7 @@ object Common {
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
     scalaVersion := Scala211,
-    crossScalaVersions := "2.12.3" :: Scala211 :: "2.10.6" :: Nil,
+    crossScalaVersions := "2.12.4" :: Scala211 :: "2.10.7" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(

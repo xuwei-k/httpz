@@ -1,8 +1,8 @@
 language: scala
 
 scala:
-  - 2.10.6
-  - 2.11.11
+  - 2.10.7
+  - 2.11.12
 
 cache:
   directories:
@@ -31,7 +31,7 @@ env:
 
 matrix:
   include:
-  - scala: 2.12.3
+  - scala: 2.12.4
     jdk: oraclejdk8
 
 addons:
