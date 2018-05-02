@@ -28,7 +28,7 @@ lazy val scalaj = module("scalaj").settings(
   buildInfoPackage := "httpz.scalajhttp",
   buildInfoObject := "BuildInfoHttpzScalaj",
   libraryDependencies ++= Seq(
-    "org.scalaj" %% "scalaj-http" % "2.3.0"
+    "org.scalaj" %% "scalaj-http" % "2.4.0"
   )
 ).dependsOn(httpz, tests % "test")
 
