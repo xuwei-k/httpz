@@ -74,11 +74,8 @@ lazy val tests = Project("tests", file("tests")).settings(
 ).dependsOn(httpz)
 
 lazy val root = {
-  import sbtunidoc.Plugin._
-
   Project("root", file(".")).settings(
     Common.baseSettings,
-    unidocSettings,
     name := "httpz-all",
     artifacts := Nil,
     packagedArtifacts := Map.empty,
@@ -86,8 +83,10 @@ lazy val root = {
     packagedArtifacts ++= Classpaths.packaged(Seq(packageDoc in Compile)).value,
     Sxr.settings1,
     Defaults.packageTaskSettings(
-      packageDoc in Compile, (UnidocKeys.unidoc in Compile).map{_.flatMap(Path.allSubpaths)}
+      packageDoc in Compile, (unidoc in Compile).map { _.flatMap(Path.allSubpaths) }
     ),
     Sxr.settings2
-  ).aggregate(httpz, scalaj, async, apache, native, nativeClient, tests)
+  )
+  .enablePlugins(ScalaUnidocPlugin)
+  .aggregate(httpz, scalaj, async, apache, native, nativeClient, tests)
 }

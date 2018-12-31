@@ -3,6 +3,7 @@ language: scala
 scala:
   - 2.10.7
   - 2.11.12
+  - 2.12.8
 
 cache:
   directories:
@@ -10,7 +11,6 @@ cache:
     - $HOME/.sbt/launchers
 
 jdk:
-  - openjdk7
   - oraclejdk8
 
 sudo: false
@@ -22,19 +22,8 @@ script:
   - sbt ++${TRAVIS_SCALA_VERSION} test runTests $(if [[ "${PUBLISH_SONATYPE}" == "true" ]]; then echo "publish" ; fi)
   - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
   - find $HOME/.ivy2/cache -name "*SNAPSHOT*" | xargs rm -rf
-  - if [[ ${JAVA_HOME} == $(jdk_switcher home oraclejdk8) ]]; then rm -rf $HOME/.ivy2/cache ; fi
 
 env:
   global:
   - secure: "kDtIuzFW9IjOfcYMgcYsqSDaTgWplSIhXbp57IUkqtSYwIwnWFnCq18NhNLdzVhQupzvGA8HJZGHCl/hv9OpO3EHPe3dmHxLGi/VSF5WypAfqtOXiuebpOBqvWybGP2LaH8ID1I+69ytR7XdhN3izbJKLVLL1vRkhZMe6IpPmUDErjP4NgYp8/WVHjIO+V1uipptifTKQTIaH5f812hT6uFTJ4CxyIqDX9wR6zaW2pJXE6PkCxqsRxUCIT9gHFQhTmkK8+ZlJdGX4V+d5BOTsZ5vzTLuN99lwufm331sA/HcUoPVicB/xCRX55ab9q08/l+XUInkFbLVX4OkBp9s844UvsE6Y6hp6XAlcbC1TShgMhZl6iP9diOWkSRGo92PkxpGWRxw7Oec/2DOC0JkQLTaDF17MDn+YQ6kLG2+bZYUn4F590YrdB9SrQHUWsz2bwxxwVYsfRW4lhBQ4kgXyoEj/DZhvjAqA6lOvOma0mNFd4dihIa4s/rceBHMSuo2NK84LdRJl1va0vQBMS2wltWizsdDSTgbplXSEJO+70c1ZWNJHbNKtrrcQ5UbGDHzY2DtFwXTypMreItR/qT+MtQx9WfA/ETFcjUBKlo0NLz8TThgA01qREc92KpuHWV556uyscUrTXmIJ6rk2Cqisgf8JDZlJugEiUIrOIaOn84="
   - secure: "CArrRYrIFdoYKhGJyAcQzR0ozsqUHV877lvSL0BfQy4nn7tkhi3mJRkFnE+fjBq4mG9JnrKmbl8tfnWM2mvlYiLlpvE9tXIEUKcpECX4jGE3CTemfxMdA0LHTM/dUIm+xoHvVXWrJum8BO+pyIGz/DgFss2HHF9HDOu1r+HLoqtpdU4IGQLpxGMXH7fGId0e1ld1Oyv3A6b+8b0EwP+9fDV8hlcaomqF6GO1YV5jy8vZIsLaPpu+IpKZyw5WTNPIn4AV3ivJsSArqmRiN0YP5BwS1Wf+mg7xhAXQlZBGZLe7CeRr+FKAktZWhK2z8JsLiDAum7/QTapdceYKrBGSSPVNekBTrV4eaIKBiMRPOMsXQDkiNUq1WzvtkbHayYJSpPcCO3+sh4iKU782WLWkL49wPYc1vN6lmfiMlbydVqtXiZnbkNrLdHjRh9yA69SpoA1I+FKKrszWl8cGDcIMcJO5O/HiOHwekV155EdT9lgbaiiC5dFFtlqURLJpAgcGzl2cKDOH/TXuV1l4XpoaPtLGXTcBMo3EeCgxl0hKWqSnYi060mWYhre8mFiqA6HK8Xlkr7mNwAVz57XFRApeOqIckGhujMOLBwq+y+I0f4Vf0E3uFlrJPuJs88OKAWXQuTfuyDtAV6iv/PoH7/drfp0XzgkjfULNBmz5k5byfxw="
-
-matrix:
-  include:
-  - scala: 2.12.6
-    jdk: oraclejdk8
-
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer

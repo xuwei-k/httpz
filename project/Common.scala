@@ -9,7 +9,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
 object Common {
 
   private def gitHash: Option[String] = scala.util.Try(
-    sys.process.Process("git rev-parse HEAD").lines_!.head
+    sys.process.Process("git rev-parse HEAD").lineStream_!.head
   ).toOption
 
   def ScalazVersion = "7.2.22"
@@ -77,7 +77,7 @@ object Common {
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
     scalaVersion := Scala211,
-    crossScalaVersions := "2.12.6" :: Scala211 :: "2.10.7" :: Nil,
+    crossScalaVersions := "2.12.8" :: Scala211 :: "2.10.7" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -101,7 +101,6 @@ object Common {
       </scm>
     ),
     fork in Test := true,
-    incOptions := incOptions.value.withNameHashing(true),
     description := "purely functional http client",
     pomPostProcess := { node =>
       import scala.xml._
