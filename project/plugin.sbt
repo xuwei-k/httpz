@@ -1,12 +1,12 @@
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_")
 
-addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.2.6")
+addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.3.1")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11")
 
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.4")
 
 addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.2")
 
