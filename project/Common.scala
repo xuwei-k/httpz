@@ -14,9 +14,13 @@ object Common {
 
   def ScalazVersion = "7.2.27"
 
-  private[this] val unusedWarnings = (
-    "-Ywarn-unused" ::
-    Nil
+  private[this] val unusedWarnings = Def.setting(
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v <= 11 =>
+        Seq("-Ywarn-unused-import")
+      case _ =>
+        Seq("-Ywarn-unused:imports")
+    }
   )
 
   private[this] val Scala211 = "2.11.12"
@@ -73,17 +77,20 @@ object Common {
       "-deprecation" ::
       "-unchecked" ::
       "-Xlint" ::
-      "-Xfuture" ::
       "-language:existentials" ::
       "-language:higherKinds" ::
       "-language:implicitConversions" ::
       Nil
     ),
     scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-      case Some((2, v)) if v >= 11 => unusedWarnings
+      case Some((2, v)) if v <= 12 =>
+        Seq(
+          "-Xfuture",
+        )
     }.toList.flatten,
+    scalacOptions ++= unusedWarnings.value,
     scalaVersion := Scala211,
-    crossScalaVersions := "2.12.8" :: Scala211 :: Nil,
+    crossScalaVersions := "2.12.8" :: Scala211 :: "2.13.0" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -119,7 +126,7 @@ object Common {
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
   ) ++ Seq(Compile, Test).flatMap(c =>
-    scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
+    scalacOptions in (c, console) --= unusedWarnings.value
   )
 
 }

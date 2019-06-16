@@ -78,7 +78,7 @@ object ApacheInterpreter extends InterpretersTemplate {
       if(i < headers.length) {
         val h = headers(i)
         val k = h.getName
-        val newV: List[String] = h.getElements.map(_.getName)(collection.breakOut)
+        val newV: List[String] = h.getElements.map(_.getName).toList
         map.get(k) match {
           case Some(v) =>
             map += ((k, v ++ newV))

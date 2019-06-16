@@ -65,7 +65,7 @@ object Tests {
     val basicAuthReq = {
       import TestServer._
       val method = "GET"
-      quote(TestAuthRes) -> Core.json(Request(
+      quote(TestAuthRes) -> Core.json[Json](Request(
         url = s"http://localhost:${port}/${TestServer.TestAuthPath}",
         method = method,
         basicAuth = Some((TestAuthUser, TestAuthPass))

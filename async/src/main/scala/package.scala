@@ -26,8 +26,8 @@ package object async {
     val builder = new RequestBuilder
     builder
       .setUrl(r.url)
-      .setHeaders(r.headers.mapValues(v => singletonList(v): JCollection[String]).asJava) // TODO
-      .setQueryParams(r.params.mapValues(v => singletonList(v)).asJava)
+      .setHeaders(r.headers.mapValues(v => singletonList(v): JCollection[String]).toMap.asJava) // TODO
+      .setQueryParams(r.params.mapValues(v => singletonList(v)).toMap.asJava)
       .setMethod(r.method)
 
     r.basicAuth.foreach{ case (user, pass) =>

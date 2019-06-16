@@ -137,7 +137,7 @@ object Http {
       // at the 0th row in some implementations.  In that case it's the http status line
       Stream.from(0).map(i => i -> conn.getHeaderField(i)).takeWhile(_._2 != null).map{ case (i, value) =>
         Option(conn.getHeaderFieldKey(i)).getOrElse("Status") -> value
-      }.groupBy(_._1).mapValues(_.map(_._2).toList)
+      }.groupBy(_._1).mapValues(_.map(_._2).toList).toMap
     }
 
     private def closeStreams(conn:HttpURLConnection): Unit = {

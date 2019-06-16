@@ -28,7 +28,7 @@ lazy val scalaj = module("scalaj").settings(
   buildInfoPackage := "httpz.scalajhttp",
   buildInfoObject := "BuildInfoHttpzScalaj",
   libraryDependencies ++= Seq(
-    "org.scalaj" %% "scalaj-http" % "2.4.1"
+    "org.scalaj" %% "scalaj-http" % "2.4.2"
   )
 ).dependsOn(httpz, tests % "test")
 
@@ -65,7 +65,7 @@ lazy val tests = Project("tests", file("tests")).settings(
   Common.baseSettings,
   libraryDependencies ++= {
     ("filter" :: "jetty" :: Nil).map(m =>
-      "ws.unfiltered" %% s"unfiltered-$m" % "0.9.1"
+      "ws.unfiltered" %% s"unfiltered-$m" % "0.10.0-M4"
     )
   },
   publishArtifact := false,
