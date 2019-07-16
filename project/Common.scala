@@ -12,7 +12,7 @@ object Common {
     sys.process.Process("git rev-parse HEAD").lineStream_!.head
   ).toOption
 
-  def ScalazVersion = "7.2.27"
+  def ScalazVersion = "7.2.28"
 
   private[this] val unusedWarnings = Def.setting(
     CrossVersion.partialVersion(scalaVersion.value) match {
