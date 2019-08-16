@@ -1,10 +1,10 @@
 package httpz
 
-import com.ning.http.client.{Request => NingRequest, Response => NingResponse, _}
+import org.asynchttpclient.{Request => AHCRequest, Response => AHCResponse, _}
 import scalaz.concurrent.Task
 import scala.collection.JavaConverters._
 import java.util.Collections.singletonList
-import java.util.{Collection => JCollection}
+import java.lang.{Iterable => JIterable}
 import scalaz._
 
 package object async {
@@ -13,20 +13,18 @@ package object async {
     new AsyncActionEOps(a)
 
   private def auth(user: String, password: String) = {
-    import com.ning.http.client.Realm.{RealmBuilder, AuthScheme}
-    new RealmBuilder()
-      .setPrincipal(user)
-      .setPassword(password)
+    import org.asynchttpclient.Realm.{Builder, AuthScheme}
+    new Builder(user, password)
       .setUsePreemptiveAuth(true)
       .setScheme(AuthScheme.BASIC)
       .build()
   }
 
-  private def httpz2ning(r: Request): NingRequest = {
+  private def httpz2ning(r: Request): AHCRequest = {
     val builder = new RequestBuilder
     builder
       .setUrl(r.url)
-      .setHeaders(r.headers.mapValues(v => singletonList(v): JCollection[String]).toMap.asJava) // TODO
+      .setHeaders(r.headers.map{case (k, v) => (k: CharSequence) -> (singletonList(v): JIterable[String])}.asJava) // TODO
       .setQueryParams(r.params.mapValues(v => singletonList(v)).toMap.asJava)
       .setMethod(r.method)
 
@@ -40,23 +38,24 @@ package object async {
   }
 
 
-  private def execute(request: NingRequest): Task[Response[ByteArray]] = {
-    val config = new AsyncHttpClientConfig.Builder()
-      .setIOThreadMultiplier(1)
+  private def execute(request: AHCRequest): Task[Response[ByteArray]] = {
+    val config = new DefaultAsyncHttpClientConfig.Builder()
       .build()
-    val client = new AsyncHttpClient(config)
+    val client = new DefaultAsyncHttpClient(config)
     Task.async[Response[ByteArray]]{ function =>
       val handler = new AsyncCompletionHandler[Unit] {
-        def onCompleted(res: NingResponse) =
+        def onCompleted(res: AHCResponse) =
           try{
             val body = new ByteArray(res.getResponseBodyAsBytes)
             val status = res.getStatusCode
-            val headers = mapAsScalaMapConverter(res.getHeaders).asScala.mapValues(_.asScala.toList).toMap
-            client.closeAsynchronously()
+            val rawHeaders = res.getHeaders
+            val headerKeys = rawHeaders.asScala.map(_.getKey)
+            val headers = headerKeys.iterator.map(key => key -> rawHeaders.getAll(key).asScala.toList).toMap
+            client.close()
             function(\/-(Response(body, status, headers)))
           }catch {
             case e: Throwable =>
-              client.closeAsynchronously()
+              client.close()
               function(-\/(e))
           }
       }
