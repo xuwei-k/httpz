@@ -48,7 +48,7 @@ lazy val nativeClient = module("native-client").settings(
   buildInfoObject := "BuildInfoHttpzNative",
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
   libraryDependencies ++= (
-    ("junit"                % "junit"              % "4.12"   % "test") ::
+    ("junit"                % "junit"              % "4.13"   % "test") ::
     ("com.novocode"         % "junit-interface"    % "0.11"   % "test") ::
     ("com.github.kristofa"  % "mock-http-server"   % "4.1"    % "test") ::
     Nil
