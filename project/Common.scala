@@ -18,15 +18,10 @@ object Common {
   def ScalazVersion = "7.2.30"
 
   private[this] val unusedWarnings = Def.setting(
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, v)) if v <= 11 =>
-        Seq("-Ywarn-unused-import")
-      case _ =>
-        Seq("-Ywarn-unused:imports")
-    }
+    Seq("-Ywarn-unused:imports")
   )
 
-  private[this] val Scala211 = "2.11.12"
+  private[this] val Scala212 = "2.12.11"
 
   val baseSettings = Seq(
     fullResolvers ~= { _.filterNot(_.name == "jcenter") },
@@ -97,8 +92,8 @@ object Common {
       .toList
       .flatten,
     scalacOptions ++= unusedWarnings.value,
-    scalaVersion := Scala211,
-    crossScalaVersions := "2.12.8" :: Scala211 :: "2.13.0" :: Nil,
+    scalaVersion := Scala212,
+    crossScalaVersions := Scala212 :: "2.13.2" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
