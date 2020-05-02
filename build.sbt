@@ -3,12 +3,12 @@ import build._
 lazy val httpz = module("httpz").settings(
   scalapropsWithScalaz,
   name := httpzName,
-  scalapropsVersion := "0.6.1",
+  scalapropsVersion := "0.8.0",
   buildInfoPackage := "httpz",
   buildInfoObject := "BuildInfoHttpz",
   libraryDependencies ++= Seq(
-    "org.scalaz" %% "scalaz-concurrent" % Common.ScalazVersion,
-    "io.argonaut" %% "argonaut" % "6.2.5"
+    "org.scalaz" %% "scalaz-core" % Common.ScalazVersion,
+    "io.argonaut" %% "argonaut" % "6.3.0"
   )
 )
 

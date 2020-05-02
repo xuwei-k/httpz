@@ -1,6 +1,6 @@
 package httpz
 
-import scalaz.{One => _, Two => _, _}
+import scalaz._
 
 final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
@@ -25,6 +25,6 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
   import syntax.apply._
 
   def zipWith[B, C](that: ActionE[E, B])(f: (A, B) => C)(implicit E: Semigroup[E]): ActionE[E, C] =
-    zipWithError(that)((a, b) => (a.validation |@| b.validation)(f).disjunction)
+    zipWithError(that)((a, b) => (a.toValidation |@| b.toValidation)(f).toDisjunction)
 
 }

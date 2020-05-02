@@ -1,16 +1,15 @@
 package httpz
 
-import scalaz.{One => _, Two => _, _}
+import scalaz._
 import scalaz.Id.Id
-import scalaz.concurrent.{Future, Task}
+import scalaz.std.scalaFuture._
+
+import scala.concurrent.{ExecutionContext, Future}
 import RequestF._
 
 abstract class InterpretersTemplate {
 
   protected[this] def request2response(req: Request): Response[ByteArray]
-
-  protected[this] def task[A](one: One[A], conf: Config): Task[A] =
-    Task(runOne(one, conf))
 
   private def runOne[A](o: One[A], conf: Config): A =
     try {
@@ -25,36 +24,17 @@ abstract class InterpretersTemplate {
     o.error(Error.http(e))
 
   object future {
-    val empty: Interpreter[Future] =
+    def empty(implicit e: ExecutionContext): Interpreter[Future] =
       apply(emptyConfig)
 
-    def apply(conf: Config): Interpreter[Future] =
+    def apply(conf: Config)(implicit e: ExecutionContext): Interpreter[Future] =
       new Interpreter[Future] {
         def go[A](a: RequestF[A]) =
           a match {
             case o @ One() =>
-              task(o, conf).get.map {
-                case \/-(r) => r
-                case -\/(l) => onHttpError(o, l)
-              }
+              Future(runOne(o, conf))
             case t @ Two() =>
               Nondeterminism[Future].mapBoth(run(t.x), run(t.y))(t.f)
-          }
-      }
-  }
-
-  object task {
-    val empty: Interpreter[Task] =
-      apply(emptyConfig)
-
-    def apply(conf: Config): Interpreter[Task] =
-      new Interpreter[Task] {
-        def go[A](a: RequestF[A]) =
-          a match {
-            case o @ One() =>
-              task(o, conf)
-            case t @ Two() =>
-              Nondeterminism[Task].mapBoth(run(t.x), run(t.y))(t.f)
           }
       }
   }
@@ -115,20 +95,22 @@ abstract class InterpretersTemplate {
     }
 
     object future {
-      private[this] val FutureApParallel = new Applicative[Future] {
-        override def point[A](a: => A) = Future(a)
-        override def ap[A, B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f, a)(_(_))
-        override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
-          Nondeterminism[Future].mapBoth(a, b)(f)
-      }
+      private[this] def FutureApParallel(implicit e: ExecutionContext) =
+        new Applicative[Future] {
+          override def point[A](a: => A) = Future(a)
+          override def ap[A, B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f, a)(_(_))
+          override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
+            Nondeterminism[Future].mapBoth(a, b)(f)
+        }
       import std.list._
 
-      private[this] val G = WriterT.writerTApplicative(Monoid[List[Time]], FutureApParallel)
+      private[this] def G(implicit e: ExecutionContext) =
+        WriterT.writerTApplicative(Monoid[List[Time]], FutureApParallel)
 
-      val empty: Interpreter[FutureTimes] =
+      def empty(implicit e: ExecutionContext): Interpreter[FutureTimes] =
         apply(emptyConfig)
 
-      def apply(conf: Config): Interpreter[FutureTimes] =
+      def apply(conf: Config)(implicit e: ExecutionContext): Interpreter[FutureTimes] =
         new Interpreter[FutureTimes] {
           def go[A](a: RequestF[A]) =
             a match {

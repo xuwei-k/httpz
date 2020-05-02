@@ -1,11 +1,10 @@
 package httpz
 
 import org.asynchttpclient.{Request => AHCRequest, Response => AHCResponse, _}
-import scalaz.concurrent.Task
 import scala.collection.JavaConverters._
 import java.util.Collections.singletonList
 import java.lang.{Iterable => JIterable}
-import scalaz._
+import scala.concurrent.{Future, Promise}
 
 package object async {
 
@@ -37,33 +36,32 @@ package object async {
     builder.build
   }
 
-  private def execute(request: AHCRequest): Task[Response[ByteArray]] = {
+  private def execute(request: AHCRequest): Future[Response[ByteArray]] = {
     val config = new DefaultAsyncHttpClientConfig.Builder().build()
     val client = new DefaultAsyncHttpClient(config)
-    Task.async[Response[ByteArray]] { function =>
-      val handler = new AsyncCompletionHandler[Unit] {
-        def onCompleted(res: AHCResponse) =
-          try {
-            val body = new ByteArray(res.getResponseBodyAsBytes)
-            val status = res.getStatusCode
-            val rawHeaders = res.getHeaders
-            val headerKeys = rawHeaders.asScala.map(_.getKey)
-            val headers = headerKeys.iterator.map(key => key -> rawHeaders.getAll(key).asScala.toList).toMap
+    val promise = Promise[Response[ByteArray]]()
+    val handler = new AsyncCompletionHandler[Unit] {
+      def onCompleted(res: AHCResponse) =
+        try {
+          val body = new ByteArray(res.getResponseBodyAsBytes)
+          val status = res.getStatusCode
+          val rawHeaders = res.getHeaders
+          val headerKeys = rawHeaders.asScala.map(_.getKey)
+          val headers = headerKeys.iterator.map(key => key -> rawHeaders.getAll(key).asScala.toList).toMap
+          client.close()
+          promise.success(Response(body, status, headers))
+        } catch {
+          case e: Throwable =>
             client.close()
-            function(\/-(Response(body, status, headers)))
-          } catch {
-            case e: Throwable =>
-              client.close()
-              function(-\/(e))
-          }
-      }
-      client.executeRequest(request, handler)
+            promise.failure(e)
+        }
     }
+    client.executeRequest(request, handler)
+    promise.future
   }
 
-  private[async] def request2async(r: Request): Task[Response[ByteArray]] = {
+  private[async] def request2async(r: Request): Future[Response[ByteArray]] = {
     val req = httpz2ning(r)
     execute(req)
   }
-
 }

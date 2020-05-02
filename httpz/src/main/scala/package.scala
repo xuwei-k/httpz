@@ -1,5 +1,6 @@
-import scalaz.{One => _, Two => _, _}
-import scalaz.concurrent.Future
+import scalaz._
+
+import scala.concurrent.Future
 
 package object httpz {
 
@@ -9,9 +10,9 @@ package object httpz {
 
   type ErrorNel = NonEmptyList[Error]
 
-  type ActionE[E, A] = EitherT[Requests, E, A]
-  type Action[A] = EitherT[Requests, Error, A]
-  type ActionNel[A] = EitherT[Requests, ErrorNel, A]
+  type ActionE[E, A] = EitherT[E, Requests, A]
+  type Action[A] = EitherT[Error, Requests, A]
+  type ActionNel[A] = EitherT[ErrorNel, Requests, A]
 
   def Action[E, A](a: Requests[E \/ A]): ActionE[E, A] = EitherT(a)
 
@@ -23,7 +24,7 @@ package object httpz {
   private[httpz] def Times[A](a: (List[Time], A)): Times[A] =
     Writer(a._1, a._2)
 
-  private[httpz] type FutureTimes[A] = WriterT[Future, List[Time], A]
+  private[httpz] type FutureTimes[A] = WriterT[List[Time], Future, A]
 
   private[httpz] implicit val timesMonad: Monad[Times] =
     scalaz.WriterT.writerMonad[List[Time]](scalaz.std.list.listMonoid)
@@ -34,7 +35,7 @@ package object httpz {
     Free.freeMonad[RequestF]
 
   def actionEMonad[E]: Monad[({ type λ[α] = ActionE[E, α] })#λ] =
-    EitherT.eitherTMonad[Requests, E]
+    EitherT.eitherTMonadError[Requests, E]
 
   val ActionMonad: Monad[Action] =
     actionEMonad[Error]

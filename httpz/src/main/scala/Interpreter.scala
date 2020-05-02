@@ -1,6 +1,6 @@
 package httpz
 
-import scalaz.{One => _, Two => _, _}
+import scalaz._
 
 abstract class Interpreter[F[_]: Monad] {
   final val interpreter: InterpreterF[F] =

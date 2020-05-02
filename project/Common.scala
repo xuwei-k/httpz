@@ -15,7 +15,7 @@ object Common {
       )
       .toOption
 
-  def ScalazVersion = "7.2.30"
+  def ScalazVersion = "7.3.0"
 
   private[this] val unusedWarnings = Def.setting(
     Seq("-Ywarn-unused:imports")
@@ -86,6 +86,7 @@ object Common {
       .condOpt(CrossVersion.partialVersion(scalaVersion.value)) {
         case Some((2, v)) if v <= 12 =>
           Seq(
+            "-Ypartial-unification",
             "-Xfuture",
           )
       }

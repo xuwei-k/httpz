@@ -1,7 +1,8 @@
 package httpz
 
-import scalaz.{One => _, Two => _, _}
-import scalaz.concurrent.{Future, Task}
+import scalaz._
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ActionOpsTemplate[E, A] extends Any {
 
@@ -9,16 +10,10 @@ trait ActionOpsTemplate[E, A] extends Any {
 
   def self: ActionE[E, A]
 
-  def task: Task[E \/ A] =
-    interpreter.task.empty.run(self)
-
-  def task(conf: Config): Task[E \/ A] =
-    interpreter.task.apply(conf).run(self)
-
-  def async: Future[E \/ A] =
+  def async(implicit e: ExecutionContext): Future[E \/ A] =
     interpreter.future.empty.run(self)
 
-  def async(conf: Config): Future[E \/ A] =
+  def async(conf: Config)(implicit e: ExecutionContext): Future[E \/ A] =
     interpreter.future.apply(conf).run(self)
 
   def withTime: Times[E \/ A] =
@@ -27,10 +22,10 @@ trait ActionOpsTemplate[E, A] extends Any {
   def withTime(conf: Config): Times[E \/ A] =
     interpreter.times.apply(conf).run(self)
 
-  def futureWithTime: Future[(List[Time], E \/ A)] =
+  def futureWithTime(implicit e: ExecutionContext): Future[(List[Time], E \/ A)] =
     interpreter.times.future.empty.run(self).run
 
-  def futureWithTime(conf: Config): Future[(List[Time], E \/ A)] =
+  def futureWithTime(conf: Config)(implicit e: ExecutionContext): Future[(List[Time], E \/ A)] =
     interpreter.times.future(conf).run(self).run
 
   def interpret: E \/ A =
