@@ -20,6 +20,6 @@ sudo: false
 script:
   - git config core.whitespace tab-in-indent,trailing-space,space-before-tab,cr-at-eol
   - git show --oneline --check
-  - sbt ++${TRAVIS_SCALA_VERSION} test runTests
+  - sbt ++${TRAVIS_SCALA_VERSION} scalafmtCheck scalafmtSbtCheck test:scalafmtCheck test runTests
   - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
   - find $HOME/.ivy2/cache -name "*SNAPSHOT*" | xargs rm -rf

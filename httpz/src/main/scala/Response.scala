@@ -27,7 +27,7 @@ final case class Response[A](body: A, status: Int, headers: Map[String, List[Str
     Response.codecAny.encode(this.asInstanceOf[Response[Any]]).toString()
 }
 
-object Response{
+object Response {
   private[this] val any2jStringEncoder: EncodeJson[Any] =
     EncodeJson(value => argonaut.Json.jString(value.toString))
 
@@ -35,9 +35,7 @@ object Response{
     codec(any2jStringEncoder)
 
   implicit def codec[A: EncodeJson]: EncodeJson[Response[A]] =
-    EncodeJson.jencode3L(
-      (res: Response[A]) => (res.body, res.status, res.headers)
-    )("body", "status", "headers")
+    EncodeJson.jencode3L((res: Response[A]) => (res.body, res.status, res.headers))("body", "status", "headers")
 
   implicit val instance: Functor[Response] =
     new Functor[Response] {

@@ -4,10 +4,11 @@ import scalaz.\/
 import RequestF._
 
 sealed abstract class RequestF[A] extends Product with Serializable {
-  def mapRequest(config: Config): RequestF[A] = this match {
-    case o @ One() => o.cp(req = config(o.req))
-    case t @ Two() => two(t.x.mapRequest(config), t.y.mapRequest(config))(t.f)
-  }
+  def mapRequest(config: Config): RequestF[A] =
+    this match {
+      case o @ One() => o.cp(req = config(o.req))
+      case t @ Two() => two(t.x.mapRequest(config), t.y.mapRequest(config))(t.f)
+    }
 }
 
 object RequestF {
@@ -20,7 +21,10 @@ object RequestF {
     def decode: (Request, B) => A
     override final def toString = s"RequestF.One(${req.method} ${req.url})"
     def cp(
-      req: Request = req, error: Error => A = error, parse: (Request, Response[ByteArray]) => B = parse, decode: (Request, B) => A = decode
+      req: Request = req,
+      error: Error => A = error,
+      parse: (Request, Response[ByteArray]) => B = parse,
+      decode: (Request, B) => A = decode
     ): RequestF[A] = one(req, error, parse, decode)
   }
 
@@ -34,8 +38,13 @@ object RequestF {
     def f: (E1 \/ X, E2 \/ Y) => A
   }
 
-  def one[A, B0](req0: Request, error0: Error => A, parse0: (Request, Response[ByteArray]) => B0, decode0: (Request, B0) => A): RequestF[A] =
-    new One[A]{
+  def one[A, B0](
+    req0: Request,
+    error0: Error => A,
+    parse0: (Request, Response[ByteArray]) => B0,
+    decode0: (Request, B0) => A
+  ): RequestF[A] =
+    new One[A] {
       type B = B0
       def req = req0
       def error = error0
@@ -43,7 +52,9 @@ object RequestF {
       def decode = decode0
     }
 
-  def two[X0, Y0, EE1, EE2, A](x0: ActionE[EE1, X0], y0: ActionE[EE2, Y0])(f0: (EE1 \/ X0, EE2 \/ Y0) => A): RequestF[A] =
+  def two[X0, Y0, EE1, EE2, A](x0: ActionE[EE1, X0], y0: ActionE[EE2, Y0])(
+    f0: (EE1 \/ X0, EE2 \/ Y0) => A
+  ): RequestF[A] =
     new Two[A] {
       type X = X0
       type Y = Y0
@@ -55,4 +66,3 @@ object RequestF {
     }
 
 }
-

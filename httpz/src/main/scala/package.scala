@@ -1,7 +1,7 @@
 import scalaz.{One => _, Two => _, _}
 import scalaz.concurrent.Future
 
-package object httpz{
+package object httpz {
 
   type InterpreterF[F[_]] = RequestF ~> F
 
@@ -33,7 +33,7 @@ package object httpz{
   val RequestsMonad: Monad[Requests] =
     Free.freeMonad[RequestF]
 
-  def actionEMonad[E]: Monad[({type λ[α] = ActionE[E, α]})#λ] =
+  def actionEMonad[E]: Monad[({ type λ[α] = ActionE[E, α] })#λ] =
     EitherT.eitherTMonad[Requests, E]
 
   val ActionMonad: Monad[Action] =
@@ -42,8 +42,8 @@ package object httpz{
   val ActionNelMonad: Monad[ActionNel] =
     actionEMonad[ErrorNel]
 
-  def ActionZipAp[E: Semigroup]: Apply[({type λ[α] = ActionE[E, α]})#λ] =
-    new Apply[({type λ[α] = ActionE[E, α]})#λ] {
+  def ActionZipAp[E: Semigroup]: Apply[({ type λ[α] = ActionE[E, α] })#λ] =
+    new Apply[({ type λ[α] = ActionE[E, α] })#λ] {
       override def ap[A, B](fa: => ActionE[E, A])(f: => ActionE[E, A => B]) =
         f.zipWith(fa)(_ apply _)
 
@@ -57,4 +57,3 @@ package object httpz{
   val ActionNelZipAp: Apply[ActionNel] =
     ActionZipAp[ErrorNel]
 }
-

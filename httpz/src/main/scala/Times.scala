@@ -1,6 +1,6 @@
 package httpz
 
-sealed abstract class Time{
+sealed abstract class Time {
   type A
   def request: Request
   def http: Long
@@ -9,7 +9,11 @@ sealed abstract class Time{
 
 object Time {
   final case class Success(
-    request: Request, result: Response[ByteArray], http: Long, parse: Long, decode: Long
+    request: Request,
+    result: Response[ByteArray],
+    http: Long,
+    parse: Long,
+    decode: Long
   ) extends Time {
     type A = Response[ByteArray]
     override def toString = {
@@ -17,15 +21,16 @@ object Time {
         "http" -> http,
         "parse" -> parse,
         "decode" -> decode
-      ).map{case (k, v) => k -> (v / 1000000.0).toString}
-    }.map{case (k, v) => s"${k.toString} = ${v.toString}"}.mkString("Time.Success(", ", ", ")")
+      ).map { case (k, v) => k -> (v / 1000000.0).toString }
+    }.map { case (k, v) => s"${k.toString} = ${v.toString}" }.mkString("Time.Success(", ", ", ")")
   }
 
   final case class Failure(
-    request: Request, result: Throwable, http: Long
+    request: Request,
+    result: Throwable,
+    http: Long
   ) extends Time {
     type A = Throwable
     override def toString = s"Time.Failure(request = ${request}, http = ${http / 1000000.0})"
   }
 }
-

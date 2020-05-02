@@ -10,4 +10,3 @@ abstract class JsonToString[A <: JsonToString[A]: EncodeJson] { self: A =>
     implicitly[EncodeJson[A]].apply(self).pretty(prettyParam)
 
 }
-

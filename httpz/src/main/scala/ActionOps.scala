@@ -6,11 +6,12 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
   def nel: ActionE[NonEmptyList[E], A] = self.leftMap(NonEmptyList.nel(_, IList.empty))
 
-  def mapRequest(f: Config): ActionE[E, A] = Action[E, A](
-    self.run.mapSuspension(new (RequestF ~> RequestF){
-      def apply[B](a: RequestF[B]) = a.mapRequest(f)
-    })
-  )
+  def mapRequest(f: Config): ActionE[E, A] =
+    Action[E, A](
+      self.run.mapSuspension(new (RequestF ~> RequestF) {
+        def apply[B](a: RequestF[B]) = a.mapRequest(f)
+      })
+    )
 
   def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[E \/ A] =
     self.run.foldMap(f)

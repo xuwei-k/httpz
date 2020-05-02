@@ -11,13 +11,13 @@ import com.github.kristofa.test.http._
 class HttpTest {
 
   val port = 51234
-  val url  = "http://localhost:" + port
+  val url = "http://localhost:" + port
 
   val rProvider = new SimpleHttpResponseProvider()
-  val server    = new MockHttpServer(port, rProvider)
+  val server = new MockHttpServer(port, rProvider)
 
-  val cType    = "text/html"
-  val rCode    = 200
+  val cType = "text/html"
+  val rCode = 200
   val response = "<html>ok</html>"
 
   @Before
@@ -71,13 +71,12 @@ class HttpTest {
     assertNotNull("the result should not be null", result)
   }
 
-
   @Test
   def shouldPrependOptions(): Unit = {
     val http = Http(url)
     val origOptions = http.options
     val origOptionsLength = origOptions.length
-    val newOptions: List[HttpOptions.HttpOption] = List(c => { }, c=> { }, c => {})
+    val newOptions: List[HttpOptions.HttpOption] = List(c => {}, c => {}, c => {})
     val http2 = http.options(newOptions)
 
     assertEquals(http2.options.length, origOptionsLength + 3)
@@ -89,12 +88,11 @@ class HttpTest {
   def lastTimeoutValueShouldWin(): Unit = {
     rProvider.expect(Method.GET, "/").respondWith(rCode, cType, response);
 
-    val getFunc: HttpExec = (req,conn) => {
-
-    }
+    val getFunc: HttpExec = (req, conn) => {}
 
     val r = Request(getFunc, Http.noopHttpUrl(url), "GET")
-      .options(HttpOptions.connTimeout(1234)).options(HttpOptions.readTimeout(1234))
+      .options(HttpOptions.connTimeout(1234))
+      .options(HttpOptions.readTimeout(1234))
     r.process(c => {
       assertEquals(c.getReadTimeout, 1234)
       assertEquals(c.getConnectTimeout, 1234)

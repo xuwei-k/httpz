@@ -13,23 +13,23 @@ package object async {
     new AsyncActionEOps(a)
 
   private def auth(user: String, password: String) = {
-    import org.asynchttpclient.Realm.{Builder, AuthScheme}
-    new Builder(user, password)
-      .setUsePreemptiveAuth(true)
-      .setScheme(AuthScheme.BASIC)
-      .build()
+    import org.asynchttpclient.Realm.{AuthScheme, Builder}
+    new Builder(user, password).setUsePreemptiveAuth(true).setScheme(AuthScheme.BASIC).build()
   }
 
   private def httpz2ning(r: Request): AHCRequest = {
     val builder = new RequestBuilder
     builder
       .setUrl(r.url)
-      .setHeaders(r.headers.map{case (k, v) => (k: CharSequence) -> (singletonList(v): JIterable[String])}.asJava) // TODO
+      .setHeaders(r.headers.map {
+        case (k, v) => (k: CharSequence) -> (singletonList(v): JIterable[String])
+      }.asJava) // TODO
       .setQueryParams(r.params.mapValues(v => singletonList(v)).toMap.asJava)
       .setMethod(r.method)
 
-    r.basicAuth.foreach{ case (user, pass) =>
-      builder.setRealm(auth(user, pass))
+    r.basicAuth.foreach {
+      case (user, pass) =>
+        builder.setRealm(auth(user, pass))
     }
 
     r.body.foreach(builder.setBody)
@@ -37,15 +37,13 @@ package object async {
     builder.build
   }
 
-
   private def execute(request: AHCRequest): Task[Response[ByteArray]] = {
-    val config = new DefaultAsyncHttpClientConfig.Builder()
-      .build()
+    val config = new DefaultAsyncHttpClientConfig.Builder().build()
     val client = new DefaultAsyncHttpClient(config)
-    Task.async[Response[ByteArray]]{ function =>
+    Task.async[Response[ByteArray]] { function =>
       val handler = new AsyncCompletionHandler[Unit] {
         def onCompleted(res: AHCResponse) =
-          try{
+          try {
             val body = new ByteArray(res.getResponseBodyAsBytes)
             val status = res.getStatusCode
             val rawHeaders = res.getHeaders
@@ -53,7 +51,7 @@ package object async {
             val headers = headerKeys.iterator.map(key => key -> rawHeaders.getAll(key).asScala.toList).toMap
             client.close()
             function(\/-(Response(body, status, headers)))
-          }catch {
+          } catch {
             case e: Throwable =>
               client.close()
               function(-\/(e))

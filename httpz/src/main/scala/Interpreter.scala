@@ -13,4 +13,3 @@ abstract class Interpreter[F[_]: Monad] {
   final def run[E, A](a: ActionE[E, A]): F[E \/ A] =
     a.run.foldMap(interpreter)
 }
-

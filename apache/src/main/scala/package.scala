@@ -6,6 +6,3 @@ package object apachehttp {
     new ApacheActionEOps(a)
 
 }
-
-
-

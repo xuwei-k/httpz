@@ -6,4 +6,3 @@ package object native {
     new NativeActionEOps(a)
 
 }
-

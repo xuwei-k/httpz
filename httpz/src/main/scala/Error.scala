@@ -2,7 +2,10 @@ package httpz
 
 import argonaut._
 
-sealed abstract class Error(value: Option[Throwable] = None) extends RuntimeException(value.orNull) with Product with Serializable {
+sealed abstract class Error(value: Option[Throwable] = None)
+    extends RuntimeException(value.orNull)
+    with Product
+    with Serializable {
   import Error._
 
   def httpOr[A](z: => A, f: Throwable => A): A =
@@ -41,20 +44,24 @@ sealed abstract class Error(value: Option[Throwable] = None) extends RuntimeExce
 object Error {
   final case class Http private[Error] (
     err: Throwable
-  )(override val toString: String = "HttpError(" + err + ")"
-  ) extends Error(Some(err))
-  final case class Parse private[Error] (response: Response[ByteArray], err: String) extends Error{
+  )(override val toString: String = "HttpError(" + err + ")")
+      extends Error(Some(err))
+  final case class Parse private[Error] (response: Response[ByteArray], err: String) extends Error {
     override def getMessage = err
   }
   final case class Decode private[Error] (
-    req: Request, message: String, history: CursorHistory, sourceJson: Json
+    req: Request,
+    message: String,
+    history: CursorHistory,
+    sourceJson: Json
   ) extends Error {
-    override def toString = Seq(
-      "request" -> s"${req.method} ${req.url}",
-      "message" -> message,
-      "history" -> history,
-      "source"  -> sourceJson.pretty(PrettyParams.spaces2)
-    ).mkString("DecodeError(",", ",")")
+    override def toString =
+      Seq(
+        "request" -> s"${req.method} ${req.url}",
+        "message" -> message,
+        "history" -> history,
+        "source" -> sourceJson.pretty(PrettyParams.spaces2)
+      ).mkString("DecodeError(", ", ", ")")
   }
 
   val http: Throwable => Error = e => Http(e)()
@@ -62,4 +69,3 @@ object Error {
   val parse: (Response[ByteArray], String) => Error = Parse
   val decode: (Request, String, CursorHistory, Json) => Error = Decode
 }
-

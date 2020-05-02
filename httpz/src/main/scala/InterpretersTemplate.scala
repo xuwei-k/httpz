@@ -30,15 +30,16 @@ abstract class InterpretersTemplate {
 
     def apply(conf: Config): Interpreter[Future] =
       new Interpreter[Future] {
-        def go[A](a: RequestF[A]) = a match {
-          case o @ One() =>
-            task(o, conf).get.map{
-              case \/-(r) => r
-              case -\/(l) => onHttpError(o, l)
-            }
-          case t @ Two() =>
-            Nondeterminism[Future].mapBoth(run(t.x), run(t.y))(t.f)
-        }
+        def go[A](a: RequestF[A]) =
+          a match {
+            case o @ One() =>
+              task(o, conf).get.map {
+                case \/-(r) => r
+                case -\/(l) => onHttpError(o, l)
+              }
+            case t @ Two() =>
+              Nondeterminism[Future].mapBoth(run(t.x), run(t.y))(t.f)
+          }
       }
   }
 
@@ -48,12 +49,13 @@ abstract class InterpretersTemplate {
 
     def apply(conf: Config): Interpreter[Task] =
       new Interpreter[Task] {
-        def go[A](a: RequestF[A]) = a match {
-          case o @ One() =>
-            task(o, conf)
-          case t @ Two() =>
-            Nondeterminism[Task].mapBoth(run(t.x), run(t.y))(t.f)
-        }
+        def go[A](a: RequestF[A]) =
+          a match {
+            case o @ One() =>
+              task(o, conf)
+            case t @ Two() =>
+              Nondeterminism[Task].mapBoth(run(t.x), run(t.y))(t.f)
+          }
       }
   }
 
@@ -63,12 +65,13 @@ abstract class InterpretersTemplate {
 
     def apply(conf: Config): Interpreter[Id] =
       new Interpreter[Id] {
-        def go[A](a: RequestF[A]) = a match {
-          case o @ One() =>
-            runOne(o, conf)
-          case t @ Two() =>
-            t.f(run(t.x), run(t.y))
-        }
+        def go[A](a: RequestF[A]) =
+          a match {
+            case o @ One() =>
+              runOne(o, conf)
+            case t @ Two() =>
+              t.f(run(t.x), run(t.y))
+          }
       }
   }
 
@@ -78,12 +81,13 @@ abstract class InterpretersTemplate {
 
     def apply(conf: Config): Interpreter[Times] =
       new Interpreter[Times] {
-        def go[A](a: RequestF[A]) = a match {
-          case o @ One() =>
-            Times(go1(o, conf))
-          case t @ Two() =>
-            timesMonad.apply2(run(t.x), run(t.y))(t.f)
-        }
+        def go[A](a: RequestF[A]) =
+          a match {
+            case o @ One() =>
+              Times(go1(o, conf))
+            case t @ Two() =>
+              timesMonad.apply2(run(t.x), run(t.y))(t.f)
+          }
       }
 
     private def go1[A](o: One[A], conf: Config): (List[Time], A) = {
@@ -97,7 +101,11 @@ abstract class InterpretersTemplate {
         val decodeResult = o.decode(r, parseResult)
         val decodeFinished = System.nanoTime - parseFinished
         val time = Time.Success(
-          r, res, httpFinished - start, parseFinished - httpFinished, decodeFinished
+          r,
+          res,
+          httpFinished - start,
+          parseFinished - httpFinished,
+          decodeFinished
         )
         (time :: Nil) -> decodeResult
       } catch {
@@ -109,7 +117,7 @@ abstract class InterpretersTemplate {
     object future {
       private[this] val FutureApParallel = new Applicative[Future] {
         override def point[A](a: => A) = Future(a)
-        override def ap[A,B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f,a)(_(_))
+        override def ap[A, B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f, a)(_(_))
         override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
           Nondeterminism[Future].mapBoth(a, b)(f)
       }
@@ -122,14 +130,14 @@ abstract class InterpretersTemplate {
 
       def apply(conf: Config): Interpreter[FutureTimes] =
         new Interpreter[FutureTimes] {
-          def go[A](a: RequestF[A]) = a match {
-            case o @ One() =>
-              WriterT(Future(go1(o, conf)))
-            case t @ Two() =>
-              G.apply2(run(t.x), run(t.y))(t.f)
-          }
+          def go[A](a: RequestF[A]) =
+            a match {
+              case o @ One() =>
+                WriterT(Future(go1(o, conf)))
+              case t @ Two() =>
+                G.apply2(run(t.x), run(t.y))(t.f)
+            }
         }
     }
   }
 }
-

@@ -14,12 +14,12 @@ object build {
   final val nativeName = "httpz-native"
   val modules = (
     httpzName ::
-    asyncName ::
-    scalajName ::
-    apacheName ::
-    nativeClientName ::
-    nativeName ::
-    Nil
+      asyncName ::
+      scalajName ::
+      apacheName ::
+      nativeClientName ::
+      nativeName ::
+      Nil
   )
 
   def module(id: String) =

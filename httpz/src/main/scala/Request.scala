@@ -1,6 +1,6 @@
 package httpz
 
-import scalaz.{Maybe, Endo}
+import scalaz.{Endo, Maybe}
 
 final case class Request(
   url: String,
@@ -17,7 +17,7 @@ final case class Request(
   def addParam(k: String, v: String): Request =
     copy(params = this.params + (k -> v))
 
-  def addParams(p: (String, String) *): Request =
+  def addParams(p: (String, String)*): Request =
     copy(params = this.params ++ p.toMap)
 
   def addParamOpt(k: String, v: Option[String]): Request =
@@ -28,11 +28,11 @@ final case class Request(
         this
     }
 
-  def addParamsOpt(p: (String, Option[String]) *): Request =
-    copy(params = this.params ++ p.collect{case (k, Some(v)) => k -> v})
+  def addParamsOpt(p: (String, Option[String])*): Request =
+    copy(params = this.params ++ p.collect { case (k, Some(v)) => k -> v })
 
-  def addParamsMaybe(p: (String, Maybe[String]) *): Request =
-    copy(params = this.params ++ p.collect{case (k, Maybe.Just(v)) => k -> v})
+  def addParamsMaybe(p: (String, Maybe[String])*): Request =
+    copy(params = this.params ++ p.collect { case (k, Maybe.Just(v)) => k -> v })
 
   def addParamMaybe(k: String, v: Maybe[String]): Request =
     v match {
@@ -45,7 +45,7 @@ final case class Request(
   def addHeader(k: String, v: String): Request =
     copy(headers = this.headers + (k -> v))
 
-  def addHeaders(p: (String, String) *): Request =
+  def addHeaders(p: (String, String)*): Request =
     copy(headers = this.headers ++ p.toMap)
 
   /** Basic authentication */
@@ -65,13 +65,13 @@ object Request {
   def header(k: String, v: String): Config =
     Endo(_.addHeader(k, v))
 
-  def headers(p: (String, String) *): Config =
+  def headers(p: (String, String)*): Config =
     Endo(_.addHeaders(p: _*))
 
   def param(k: String, v: String): Config =
     Endo(_.addParam(k, v))
 
-  def params(p: (String, String) *): Config =
+  def params(p: (String, String)*): Config =
     Endo(_.addParams(p: _*))
 
   def paramOpt(k: String, v: Option[String]): Config =

@@ -6,4 +6,3 @@ package object scalajhttp {
     new ScalajActionEOps(a)
 
 }
-

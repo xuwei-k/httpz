@@ -17,24 +17,26 @@ final case class HttpError(
   status: Int,
   body: String
 ) extends RuntimeException {
-  override def toString = Seq(
-    "status" -> status,
-    "body" -> body
-  ).mkString(getClass.getName + "(", ", ", ")")
+  override def toString =
+    Seq(
+      "status" -> status,
+      "body" -> body
+    ).mkString(getClass.getName + "(", ", ", ")")
 }
 
 object ApacheInterpreter extends InterpretersTemplate {
 
-  private def using[A <: Closeable, B](resource: A)(f: A => B): B = try {
-    f(resource)
-  } finally {
-    resource.close()
-  }
+  private def using[A <: Closeable, B](resource: A)(f: A => B): B =
+    try {
+      f(resource)
+    } finally {
+      resource.close()
+    }
 
   private def setByteArrayEntity(req: HttpEntityEnclosingRequestBase, body: Option[Array[Byte]]) = {
     body match {
       case Some(bytes) =>
-       req.setEntity(new ByteArrayEntity(bytes))
+        req.setEntity(new ByteArrayEntity(bytes))
       case None =>
     }
     req
@@ -62,12 +64,13 @@ object ApacheInterpreter extends InterpretersTemplate {
         setByteArrayEntity(r, req.body)
     }
     val c = HttpClients.createDefault()
-    req.basicAuth.foreach{ case (user, pass) =>
-      val creds = new UsernamePasswordCredentials(user, pass)
-      val context = HttpClientContext.create()
-      request.addHeader(new BasicScheme().authenticate(creds, request, context))
+    req.basicAuth.foreach {
+      case (user, pass) =>
+        val creds = new UsernamePasswordCredentials(user, pass)
+        val context = HttpClientContext.create()
+        request.addHeader(new BasicScheme().authenticate(creds, request, context))
     }
-    req.headers.foreach{ case (k, v) => request.addHeader(k, v) }
+    req.headers.foreach { case (k, v) => request.addHeader(k, v) }
     c.execute(request)
   }
 
@@ -75,7 +78,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     val map = collection.mutable.Map.empty[String, List[String]]
     @annotation.tailrec
     def loop(i: Int): Unit = {
-      if(i < headers.length) {
+      if (i < headers.length) {
         val h = headers(i)
         val k = h.getName
         val newV: List[String] = h.getElements.map(_.getName).toList
@@ -93,7 +96,7 @@ object ApacheInterpreter extends InterpretersTemplate {
   }
 
   override protected def request2response(req: httpz.Request) = {
-    using(executeRequest(req)){ res =>
+    using(executeRequest(req)) { res =>
       val code = res.getStatusLine().getStatusCode()
       val headers = convertHeaders(res.getAllHeaders())
       val entity = res.getEntity()
@@ -102,22 +105,23 @@ object ApacheInterpreter extends InterpretersTemplate {
         case (s, enc) if enc.getValue == "gzip" => new GZIPInputStream(s)
         case (s, _) => s
       }
-      val body = try{
-        new ByteArray(Core.inputStream2bytes(stm))
-      }finally{
-        stm.close()
-      }
+      val body =
+        try {
+          new ByteArray(Core.inputStream2bytes(stm))
+        } finally {
+          stm.close()
+        }
       Response(body, code, headers)
     }
   }
 
   private def buildURI(req: httpz.Request): URI = {
     val uriBuilder = new org.apache.http.client.utils.URIBuilder(req.url)
-    req.params.foreach{ case (key, value) =>
-      uriBuilder.addParameter(key, value)
+    req.params.foreach {
+      case (key, value) =>
+        uriBuilder.addParameter(key, value)
     }
     uriBuilder.build
   }
 
 }
-
