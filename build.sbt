@@ -73,7 +73,7 @@ lazy val tests = Project("tests", file("tests"))
   .settings(
     Common.baseSettings,
     libraryDependencies ++= {
-      ("filter" :: "jetty" :: Nil).map(m => "ws.unfiltered" %% s"unfiltered-$m" % "0.10.0-M9")
+      ("filter" :: "jetty" :: Nil).map(m => "ws.unfiltered" %% s"unfiltered-$m" % "0.10.0-M10")
     },
     publishArtifact := false,
     publish := {},
