@@ -20,15 +20,14 @@ package object async {
     val builder = new RequestBuilder
     builder
       .setUrl(r.url)
-      .setHeaders(r.headers.map {
-        case (k, v) => (k: CharSequence) -> (singletonList(v): JIterable[String])
+      .setHeaders(r.headers.map { case (k, v) =>
+        (k: CharSequence) -> (singletonList(v): JIterable[String])
       }.asJava) // TODO
       .setQueryParams(r.params.mapValues(v => singletonList(v)).toMap.asJava)
       .setMethod(r.method)
 
-    r.basicAuth.foreach {
-      case (user, pass) =>
-        builder.setRealm(auth(user, pass))
+    r.basicAuth.foreach { case (user, pass) =>
+      builder.setRealm(auth(user, pass))
     }
 
     r.body.foreach(builder.setBody)
