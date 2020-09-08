@@ -64,11 +64,10 @@ object ApacheInterpreter extends InterpretersTemplate {
         setByteArrayEntity(r, req.body)
     }
     val c = HttpClients.createDefault()
-    req.basicAuth.foreach {
-      case (user, pass) =>
-        val creds = new UsernamePasswordCredentials(user, pass)
-        val context = HttpClientContext.create()
-        request.addHeader(new BasicScheme().authenticate(creds, request, context))
+    req.basicAuth.foreach { case (user, pass) =>
+      val creds = new UsernamePasswordCredentials(user, pass)
+      val context = HttpClientContext.create()
+      request.addHeader(new BasicScheme().authenticate(creds, request, context))
     }
     req.headers.foreach { case (k, v) => request.addHeader(k, v) }
     c.execute(request)
@@ -117,9 +116,8 @@ object ApacheInterpreter extends InterpretersTemplate {
 
   private def buildURI(req: httpz.Request): URI = {
     val uriBuilder = new org.apache.http.client.utils.URIBuilder(req.url)
-    req.params.foreach {
-      case (key, value) =>
-        uriBuilder.addParameter(key, value)
+    req.params.foreach { case (key, value) =>
+      uriBuilder.addParameter(key, value)
     }
     uriBuilder.build
   }

@@ -48,22 +48,19 @@ object TestServer extends unfiltered.filter.Plan {
       PATCH -> "PATCH",
       TRACE -> "TRACE"
     ).map { case (k, v) => k -> json(v) }
-  ).map {
-    case (method, res) =>
-      {
-        case method(Params(TestParam(d)) & TestHeader(h)) if h == TestHeaderValue =>
-          testResponseHeaders.foldLeft(res) {
-            case (acc, (key, values)) =>
-              new ResponseHeader(key, values) ~> acc
-          }
-      }: Intent
+  ).map { case (method, res) =>
+    {
+      case method(Params(TestParam(d)) & TestHeader(h)) if h == TestHeaderValue =>
+        testResponseHeaders.foldLeft(res) { case (acc, (key, values)) =>
+          new ResponseHeader(key, values) ~> acc
+        }
+    }: Intent
   }
 
   private[this] object AuthExtractor {
     def unapply[A](req: unfiltered.request.HttpRequest[A]): Boolean =
-      BasicAuth(req).forall {
-        case (user, pass) =>
-          user == TestAuthUser && pass == TestAuthPass
+      BasicAuth(req).forall { case (user, pass) =>
+        user == TestAuthUser && pass == TestAuthPass
       }
   }
 

@@ -132,9 +132,8 @@ object Http {
       url(this).openConnection match {
         case conn: HttpURLConnection =>
           conn.setInstanceFollowRedirects(true)
-          headers.reverse.foreach {
-            case (name, value) =>
-              conn.setRequestProperty(name, value)
+          headers.reverse.foreach { case (name, value) =>
+            conn.setRequestProperty(name, value)
           }
           options.reverse.foreach(_(conn))
 
@@ -160,9 +159,8 @@ object Http {
         .from(0)
         .map(i => i -> conn.getHeaderField(i))
         .takeWhile(_._2 != null)
-        .map {
-          case (i, value) =>
-            Option(conn.getHeaderFieldKey(i)).getOrElse("Status") -> value
+        .map { case (i, value) =>
+          Option(conn.getHeaderFieldKey(i)).getOrElse("Status") -> value
         }
         .groupBy(_._1)
         .mapValues(_.map(_._2).toList)
@@ -347,48 +345,46 @@ object Http {
         out.write(s.getBytes(Http.utf8))
       }
 
-      paramBytes.foreach {
-        case (name, value) =>
-          writeBytes(Pref + Boundary + CrLf)
-          writeBytes(ContentDisposition)
-          out.write(name)
-          writeBytes("\"" + CrLf)
-          writeBytes(CrLf)
-          out.write(value)
-          writeBytes(CrLf)
+      paramBytes.foreach { case (name, value) =>
+        writeBytes(Pref + Boundary + CrLf)
+        writeBytes(ContentDisposition)
+        out.write(name)
+        writeBytes("\"" + CrLf)
+        writeBytes(CrLf)
+        out.write(value)
+        writeBytes(CrLf)
       }
 
       val buffer = new Array[Byte](req.sendBufferSize)
 
-      partBytes.foreach {
-        case (name, filename, part) =>
-          writeBytes(Pref + Boundary + CrLf)
-          writeBytes(ContentDisposition)
-          out.write(name)
-          writeBytes(Filename)
-          out.write(filename)
-          writeBytes("\"" + CrLf)
-          writeBytes(ContentType + part.mime + CrLf + CrLf)
+      partBytes.foreach { case (name, filename, part) =>
+        writeBytes(Pref + Boundary + CrLf)
+        writeBytes(ContentDisposition)
+        out.write(name)
+        writeBytes(Filename)
+        out.write(filename)
+        writeBytes("\"" + CrLf)
+        writeBytes(ContentType + part.mime + CrLf + CrLf)
 
-          var bytesWritten: Long = 0L
+        var bytesWritten: Long = 0L
 
-          @annotation.tailrec
-          def readOnce(): Unit = {
-            val len = part.data.read(buffer)
-            if (len > 0) {
-              out.write(buffer, 0, len)
-              bytesWritten += len
-              part.writeCallBack(bytesWritten)
-            }
-
-            if (len >= 0) {
-              readOnce
-            }
+        @annotation.tailrec
+        def readOnce(): Unit = {
+          val len = part.data.read(buffer)
+          if (len > 0) {
+            out.write(buffer, 0, len)
+            bytesWritten += len
+            part.writeCallBack(bytesWritten)
           }
 
-          readOnce
+          if (len >= 0) {
+            readOnce
+          }
+        }
 
-          writeBytes(CrLf)
+        readOnce
+
+        writeBytes(CrLf)
       }
 
       writeBytes(Pref + Boundary + Pref + CrLf)

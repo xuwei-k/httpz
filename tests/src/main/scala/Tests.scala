@@ -92,14 +92,13 @@ object Tests {
       println(result)
       result match {
         case \/-(a) =>
-          expect.foreach {
-            case (k, v) =>
-              headerType match {
-                case _: HeaderType.CommaSeparated.type =>
-                  assert(a.get(k).map(_.head) == Some(v.mkString(", ")), List(k, a, expect).mkString("\n", "\n", ""))
-                case _: HeaderType.Multi.type =>
-                  assert(a.get(k) == Some(v), List(k, a, expect).mkString("\n", "\n", ""))
-              }
+          expect.foreach { case (k, v) =>
+            headerType match {
+              case _: HeaderType.CommaSeparated.type =>
+                assert(a.get(k).map(_.head) == Some(v.mkString(", ")), List(k, a, expect).mkString("\n", "\n", ""))
+              case _: HeaderType.Multi.type =>
+                assert(a.get(k) == Some(v), List(k, a, expect).mkString("\n", "\n", ""))
+            }
           }
         case -\/(e) =>
           throw e
