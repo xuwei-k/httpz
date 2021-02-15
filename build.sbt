@@ -3,7 +3,7 @@ import build._
 lazy val httpz = module("httpz").settings(
   scalapropsWithScalaz,
   name := httpzName,
-  scalapropsVersion := "0.8.0",
+  scalapropsVersion := "0.8.2",
   buildInfoPackage := "httpz",
   buildInfoObject := "BuildInfoHttpz",
   libraryDependencies ++= Seq(
