@@ -93,7 +93,7 @@ object Common {
       .flatten,
     scalacOptions ++= unusedWarnings.value,
     scalaVersion := Scala212,
-    crossScalaVersions := Scala212 :: "2.13.4" :: Nil,
+    crossScalaVersions := Scala212 :: "2.13.6" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
