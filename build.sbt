@@ -8,7 +8,7 @@ lazy val httpz = module("httpz").settings(
   buildInfoObject := "BuildInfoHttpz",
   libraryDependencies ++= Seq(
     "org.scalaz" %% "scalaz-core" % Common.ScalazVersion,
-    "io.argonaut" %% "argonaut" % "6.3.4"
+    "io.argonaut" %% "argonaut" % "6.3.5"
   )
 )
 
