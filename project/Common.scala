@@ -72,14 +72,12 @@ object Common {
     organization := "com.github.xuwei-k",
     homepage := Some(url("https://github.com/xuwei-k/httpz")),
     licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
-    scalacOptions ++= (
-      "-deprecation" ::
-        "-unchecked" ::
-        "-Xlint" ::
-        "-language:existentials" ::
-        "-language:higherKinds" ::
-        "-language:implicitConversions" ::
-        Nil
+    scalacOptions ++= Seq(
+      "-deprecation",
+      "-unchecked",
+      "-language:existentials",
+      "-language:higherKinds",
+      "-language:implicitConversions",
     ),
     scalacOptions ++= PartialFunction
       .condOpt(CrossVersion.partialVersion(scalaVersion.value)) {
@@ -91,9 +89,16 @@ object Common {
       }
       .toList
       .flatten,
-    scalacOptions ++= unusedWarnings.value,
+    scalacOptions ++= {
+      scalaBinaryVersion.value match {
+        case "3" =>
+          Nil
+        case _ =>
+          Seq("-Xlint") ++ unusedWarnings.value
+      }
+    },
     scalaVersion := Scala212,
-    crossScalaVersions := Scala212 :: "2.13.6" :: Nil,
+    crossScalaVersions := Scala212 :: "2.13.6" :: "3.0.2" :: Nil,
     (Compile / doc / scalacOptions) ++= {
       val tag = if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
