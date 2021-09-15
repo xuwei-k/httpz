@@ -54,7 +54,7 @@ object Common {
       ReleaseStep(
         action = { state =>
           val extracted = Project extract state
-          extracted.runAggregated(PgpKeys.publishSigned in Global in extracted.get(thisProjectRef), state)
+          extracted.runAggregated(extracted.get(thisProjectRef) / (Global / PgpKeys.publishSigned), state)
         },
         enableCrossBuild = true
       ),
@@ -94,16 +94,16 @@ object Common {
     scalacOptions ++= unusedWarnings.value,
     scalaVersion := Scala212,
     crossScalaVersions := Scala212 :: "2.13.6" :: Nil,
-    scalacOptions in (Compile, doc) ++= {
+    (Compile / doc / scalacOptions) ++= {
       val tag = if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
         "-sourcepath",
-        (baseDirectory in LocalRootProject).value.getAbsolutePath,
+        (LocalRootProject / baseDirectory).value.getAbsolutePath,
         "-doc-source-url",
         s"https://github.com/xuwei-k/httpz/tree/${tag}€{FILE_PATH}.scala"
       )
     },
-    logBuffered in Test := false,
+    Test / logBuffered := false,
     pomExtra := (
       <developers>
         <developer>
@@ -118,7 +118,7 @@ object Common {
         <tag>{if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }}</tag>
       </scm>
     ),
-    fork in Test := true,
+    Test / fork := true,
     description := "purely functional http client",
     pomPostProcess := { node =>
       import scala.xml._
@@ -131,6 +131,6 @@ object Common {
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
-  ) ++ Seq(Compile, Test).flatMap(c => scalacOptions in (c, console) --= unusedWarnings.value)
+  ) ++ Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value)
 
 }

@@ -25,7 +25,7 @@ object UpdateReadme {
           val i = modules.map("\"" + _ + "\"").indexWhere(line.contains)
           s"""libraryDependencies += "${org}" %% "${modules(i)}" % "$v""""
         } else if (line.contains(sonatypeURL) && matchReleaseOrSnapshot) {
-          val n = extracted get (name in LocalRootProject)
+          val n = extracted.get(LocalRootProject / name)
           val javadocIndexHtml = "-javadoc.jar/!/index.html"
           val baseURL =
             s"${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.', '/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}"

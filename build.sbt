@@ -88,11 +88,11 @@ lazy val root = {
       name := "httpz-all",
       artifacts := Nil,
       packagedArtifacts := Map.empty,
-      artifacts ++= Classpaths.artifactDefs(Seq(packageDoc in Compile)).value,
-      packagedArtifacts ++= Classpaths.packaged(Seq(packageDoc in Compile)).value,
+      artifacts ++= Classpaths.artifactDefs(Seq(Compile / packageDoc)).value,
+      packagedArtifacts ++= Classpaths.packaged(Seq(Compile / packageDoc)).value,
       Defaults.packageTaskSettings(
-        packageDoc in Compile,
-        (unidoc in Compile).map { _.flatMap(Path.allSubpaths) }
+        Compile / packageDoc,
+        (Compile / unidoc).map { _.flatMap(Path.allSubpaths) }
       ),
     )
     .enablePlugins(ScalaUnidocPlugin)

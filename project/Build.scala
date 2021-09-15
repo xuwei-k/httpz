@@ -4,7 +4,7 @@ import scalaprops.ScalapropsPlugin.autoImport._
 
 object build {
 
-  val testSetting = TaskKey[Unit]("runTests") := (run in Test).toTask("").value
+  val testSetting = TaskKey[Unit]("runTests") := (Test / run).toTask("").value
 
   final val httpzName = "httpz"
   final val asyncName = "httpz-async"
