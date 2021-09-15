@@ -7,29 +7,29 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.7.0"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.8.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.7.0"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.8.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.7.0"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-native" % "0.8.0"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.7.0"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.8.0"
 ```
 
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.12/0.7.0/httpz-all_2.12-0.7.0-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.12/0.8.0/httpz-all_2.12-0.8.0-javadoc.jar/!/index.html)
 
 
 ### for scalaz 7.1.x
