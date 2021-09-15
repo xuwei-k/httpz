@@ -26,14 +26,11 @@ object UpdateReadme {
           s"""libraryDependencies += "${org}" %% "${modules(i)}" % "$v""""
         } else if (line.contains(sonatypeURL) && matchReleaseOrSnapshot) {
           val n = extracted get (name in LocalRootProject)
-          val sxrIndexHtml = "-sxr.jar/!/index.html"
           val javadocIndexHtml = "-javadoc.jar/!/index.html"
           val baseURL =
             s"${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.', '/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}"
           if (line.contains(javadocIndexHtml)) {
             s"- [API Documentation](${baseURL}${javadocIndexHtml})"
-          } else if (line.contains(sxrIndexHtml)) {
-            s"- [sxr](${baseURL}${sxrIndexHtml})"
           } else line
         } else line
       }

@@ -90,12 +90,10 @@ lazy val root = {
       packagedArtifacts := Map.empty,
       artifacts ++= Classpaths.artifactDefs(Seq(packageDoc in Compile)).value,
       packagedArtifacts ++= Classpaths.packaged(Seq(packageDoc in Compile)).value,
-      Sxr.settings1,
       Defaults.packageTaskSettings(
         packageDoc in Compile,
         (unidoc in Compile).map { _.flatMap(Path.allSubpaths) }
       ),
-      Sxr.settings2
     )
     .enablePlugins(ScalaUnidocPlugin)
     .aggregate(httpz, scalaj, async, apache, native, nativeClient, tests)

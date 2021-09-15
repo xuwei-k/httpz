@@ -30,7 +30,6 @@ libraryDependencies += "com.github.xuwei-k" %% "httpz-async" % "0.7.0"
 
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.12/0.7.0/httpz-all_2.12-0.7.0-javadoc.jar/!/index.html)
-- [sxr](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/httpz-all_2.12/0.7.0/httpz-all_2.12-0.7.0-sxr.jar/!/index.html)
 
 
 ### for scalaz 7.1.x
