@@ -4,7 +4,7 @@ import scalaprops._
 import scalaz.std.anyVal._
 
 object ResponseTest extends Scalaprops {
-  private[this] implicit val strGen = Gen.asciiString
+  private[this] implicit val strGen: Gen[String] = Gen.asciiString
 
   implicit def gen[A: Gen]: Gen[Response[A]] =
     Gen.from3(Response.apply[A] _)

@@ -11,7 +11,7 @@ object Core extends Core[RequestF] {
    * @see [[https://dl.dropboxusercontent.com/u/4588997/ReasonablyPriced.pdf]]
    * @see [[https://gist.github.com/runarorama/a8fab38e473fafa0921d]]
    */
-  implicit def instance[F[_]](implicit I: Inject[RequestF, F]) =
+  implicit def instance[F[_]](implicit I: Inject[RequestF, F]): Core[F] =
     new Core[F]
 
   def inputStream2bytes(in: InputStream): Array[Byte] = {

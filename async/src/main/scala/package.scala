@@ -8,7 +8,7 @@ import scala.concurrent.{Future, Promise}
 
 package object async {
 
-  implicit def toAsyncActionEOps[E, A](a: ActionE[E, A]) =
+  implicit def toAsyncActionEOps[E, A](a: ActionE[E, A]): AsyncActionEOps[E, A] =
     new AsyncActionEOps(a)
 
   private def auth(user: String, password: String) = {

@@ -187,13 +187,13 @@ object Http {
       }
 
     def asCodeHeaders: (Int, Map[String, List[String]]) =
-      process { conn: HttpURLConnection =>
+      process { conn =>
         closeStreams(conn)
         (conn.getResponseCode, getResponseHeaders(conn))
       }
 
     def asHeadersAndParse[T](parser: InputStream => T): (Int, Map[String, List[String]], T) =
-      process { conn: HttpURLConnection =>
+      process { conn =>
         (conn.getResponseCode, getResponseHeaders(conn), tryParse(conn.getInputStream(), parser))
       }
 
@@ -226,10 +226,10 @@ object Http {
     def readOnce(): Unit = {
       val len = in.read(ba)
       if (len > 0) bos.appendAll(ba, 0, len)
-      if (len >= 0) readOnce
+      if (len >= 0) readOnce()
     }
 
-    readOnce
+    readOnce()
     bos.toString
   }
 
@@ -245,10 +245,10 @@ object Http {
     def readOnce(): Unit = {
       val len = in.read(ba)
       if (len > 0) bos.write(ba, 0, len)
-      if (len >= 0) readOnce
+      if (len >= 0) readOnce()
     }
 
-    readOnce
+    readOnce()
 
     bos.toByteArray
   }
@@ -378,11 +378,11 @@ object Http {
           }
 
           if (len >= 0) {
-            readOnce
+            readOnce()
           }
         }
 
-        readOnce
+        readOnce()
 
         writeBytes(CrLf)
       }
