@@ -171,12 +171,12 @@ object Http {
       try {
         conn.getInputStream().close
       } catch {
-        case e: Exception => //ignore
+        case e: Exception => // ignore
       }
       try {
         conn.getErrorStream().close
       } catch {
-        case e: Exception => //ignore
+        case e: Exception => // ignore
       }
     }
 

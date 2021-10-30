@@ -19,7 +19,7 @@ object Tests {
     "DELETE",
     "OPTIONS",
     "PATCH",
-    "TRACE" //, "HEAD" // TODO
+    "TRACE" // , "HEAD" // TODO
   )
 
   private def test(interpreter: InterpretersTemplate, httpMethods: List[String], headerType: HeaderType) =
