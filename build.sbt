@@ -55,7 +55,7 @@ lazy val nativeClient = module("native-client").settings(
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
   libraryDependencies ++= (
     ("junit" % "junit" % "4.13.2" % "test") ::
-      ("com.github.sbt" % "junit-interface" % "0.13.2" % "test") ::
+      ("com.github.sbt" % "junit-interface" % "0.13.3" % "test") ::
       ("com.github.kristofa" % "mock-http-server" % "4.1" % "test") ::
       Nil
   )
