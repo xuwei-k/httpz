@@ -15,7 +15,7 @@ object Common {
       )
       .toOption
 
-  def ScalazVersion = "7.3.6"
+  def ScalazVersion = "7.3.7"
 
   private[this] val unusedWarnings = Def.setting(
     Seq("-Ywarn-unused:imports")
