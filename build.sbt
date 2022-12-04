@@ -43,7 +43,7 @@ lazy val apache = module("apache")
     buildInfoPackage := "httpz.apachehttp",
     buildInfoObject := "BuildInfoHttpzApache",
     libraryDependencies ++= Seq(
-      "org.apache.httpcomponents" % "httpclient" % "4.5.13"
+      "org.apache.httpcomponents" % "httpclient" % "4.5.14"
     )
   )
   .dependsOn(httpz, tests % "test")
