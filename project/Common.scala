@@ -98,7 +98,7 @@ object Common {
       }
     },
     scalaVersion := Scala212,
-    crossScalaVersions := Scala212 :: "2.13.14" :: "3.3.3" :: Nil,
+    crossScalaVersions := Scala212 :: "2.13.14" :: "3.4.1" :: Nil,
     (Compile / doc / scalacOptions) ++= {
       val tag = if (isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
