@@ -16,4 +16,5 @@ jobs:
         java-version: 11
         distribution: adopt
     - uses: coursier/cache-action@v6
+    - uses: sbt/setup-sbt@v1
     - run: sbt "+scalafmtCheckAll" scalafmtSbtCheck "+test" "+runTests"
